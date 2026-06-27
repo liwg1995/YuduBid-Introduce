@@ -32,8 +32,9 @@ body {
   min-width: 320px;
   color: var(--text);
   background:
-    radial-gradient(circle at 72% 10%, rgba(20, 164, 255, 0.42), transparent 30%),
-    radial-gradient(circle at 20% 20%, rgba(95, 107, 255, 0.24), transparent 28%),
+    radial-gradient(circle at 76% 8%, rgba(20, 164, 255, 0.36), transparent 31%),
+    radial-gradient(circle at 18% 22%, rgba(95, 107, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 50% 74%, rgba(36, 215, 255, 0.12), transparent 34%),
     linear-gradient(135deg, #05102a 0%, #081a3a 42%, #032854 100%);
   overflow-x: hidden;
 }
@@ -47,7 +48,8 @@ body::before {
     linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 72px 72px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 78%);
+  opacity: 0.72;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.74), transparent 78%);
 }
 
 a {
@@ -76,26 +78,8 @@ main {
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  opacity: 1;
-}
-
-.ripple-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.ripple-layer span {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 1px solid rgba(36, 215, 255, 0.42);
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  animation: cursorRipple 0.9s ease-out forwards;
-  box-shadow: 0 0 28px rgba(36, 215, 255, 0.22);
+  opacity: 0.96;
+  mix-blend-mode: screen;
 }
 
 .nav {
@@ -825,17 +809,6 @@ footer a {
 @media (prefers-reduced-motion: no-preference) {
   .feature-orbit img {
     animation: floatImage 8s ease-in-out infinite;
-  }
-}
-
-@keyframes cursorRipple {
-  0% {
-    opacity: 0.58;
-    transform: translate(-50%, -50%) scale(0.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(8);
   }
 }
 

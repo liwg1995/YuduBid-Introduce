@@ -183,36 +183,395 @@ function ParticleField() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let frame = 0;
     let raf = 0;
-    const pointer = { x: 0.5, y: 0.5, active: false };
-    const points = Array.from({ length: 138 }, (_, index) => ({
-      x: Math.random(),
-      y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.001,
-      vy: (Math.random() - 0.5) * 0.001,
-      r: 0.8 + (index % 5) * 0.35
-    }));
+    let frame = 0;
+    let width = 0;
+    let height = 0;
+    const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, active: false };
+    const scroll = { current: 0, target: 0 };
+    const seed = 42;
+    const random = (index: number) => {
+      const value = Math.sin(index * 999 + seed) * 10000;
+      return value - Math.floor(value);
+    };
+    const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+    const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
+    const rgba = (r: number, g: number, b: number, a: number) => `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
+    const mixColor = (from: [number, number, number], to: [number, number, number], amount: number, alpha: number) =>
+      rgba(mix(from[0], to[0], amount), mix(from[1], to[1], amount), mix(from[2], to[2], amount), alpha);
+    type Point = {
+      x: number;
+      y: number;
+      baseX: number;
+      baseY: number;
+      vx: number;
+      vy: number;
+      layer: number;
+      phase: number;
+      radius: number;
+      tone: number;
+    };
+    type Orb = {
+      x: number;
+      y: number;
+      radius: number;
+      drift: number;
+      phase: number;
+      palette: Array<[number, string]>;
+      ring: string;
+      speed: number;
+    };
+    type Dust = {
+      angle: number;
+      distance: number;
+      spread: number;
+      size: number;
+      phase: number;
+      tone: number;
+      speed: number;
+      alpha: number;
+      tail: number;
+    };
+    let points: Point[] = [];
+    let orbs: Orb[] = [];
+    let innerDust: Dust[] = [];
+    let haloDust: Dust[] = [];
+
+    const makePoints = () => {
+      const count = width < 720 ? 58 : width < 1100 ? 82 : 112;
+      points = Array.from({ length: count }, (_, index) => {
+        const layer = 0.55 + random(index + 11) * 1.45;
+        const baseX = random(index + 21);
+        const baseY = random(index + 31);
+        return {
+          x: baseX,
+          y: baseY,
+          baseX,
+          baseY,
+          vx: (random(index + 41) - 0.5) * 0.0007,
+          vy: (random(index + 51) - 0.5) * 0.0007,
+          layer,
+          phase: random(index + 61) * Math.PI * 2,
+          radius: 0.65 + random(index + 71) * 1.9,
+          tone: random(index + 81)
+        };
+      });
+    };
+
+    const makeOrbs = () => {
+      const scale = Math.min(width, 1280) / 1280;
+      orbs = [
+        {
+          x: 0.75,
+          y: 0.82,
+          radius: 430 + 190 * scale,
+          drift: 0.028,
+          phase: 0.2,
+          palette: [
+            [0, "rgba(232, 252, 255, 0.46)"],
+            [0.16, "rgba(95, 239, 255, 0.34)"],
+            [0.42, "rgba(88, 111, 255, 0.24)"],
+            [0.72, "rgba(18, 45, 112, 0.16)"],
+            [1, "rgba(7, 20, 50, 0)"]
+          ],
+          ring: "rgba(188, 250, 255, 0.25)",
+          speed: 0.0034
+        },
+        {
+          x: 0.17,
+          y: 0.7,
+          radius: 92 + 48 * scale,
+          drift: 0.022,
+          phase: 2.4,
+          palette: [
+            [0, "rgba(112, 97, 255, 0.32)"],
+            [0.32, "rgba(38, 218, 255, 0.26)"],
+            [0.72, "rgba(25, 55, 118, 0.18)"],
+            [1, "rgba(6, 18, 46, 0)"]
+          ],
+          ring: "rgba(116, 128, 255, 0.22)",
+          speed: 0.0028
+        },
+        {
+          x: 0.54,
+          y: 0.48,
+          radius: 70 + 32 * scale,
+          drift: 0.018,
+          phase: 4.1,
+          palette: [
+            [0, "rgba(241, 252, 255, 0.48)"],
+            [0.22, "rgba(89, 232, 255, 0.26)"],
+            [0.64, "rgba(28, 94, 190, 0.16)"],
+            [1, "rgba(6, 18, 46, 0)"]
+          ],
+          ring: "rgba(220, 252, 255, 0.2)",
+          speed: 0.0038
+        }
+      ];
+    };
+
+    const makeDust = () => {
+      const innerCount = width < 720 ? 420 : width < 1100 ? 760 : 1120;
+      const haloCount = width < 720 ? 360 : width < 1100 ? 680 : 980;
+      innerDust = Array.from({ length: innerCount }, (_, index) => ({
+        angle: -Math.PI * 0.96 + random(index + 101) * Math.PI * 1.06,
+        distance: 0.11 + random(index + 111) ** 0.78 * 0.68,
+        spread: (random(index + 121) - 0.5) * 0.28,
+        size: 0.55 + random(index + 131) * 2.35,
+        phase: random(index + 141) * Math.PI * 2,
+        tone: random(index + 151),
+        speed: 0.003 + random(index + 161) * 0.008,
+        alpha: 0.14 + random(index + 171) * 0.7,
+        tail: 2 + random(index + 181) * 12
+      }));
+      haloDust = Array.from({ length: haloCount }, (_, index) => ({
+        angle: -Math.PI * 1.04 + random(index + 201) * Math.PI * 1.16,
+        distance: 0.82 + random(index + 211) ** 0.48 * 0.48,
+        spread: (random(index + 221) - 0.5) * 0.56,
+        size: 0.45 + random(index + 231) * 2.15,
+        phase: random(index + 241) * Math.PI * 2,
+        tone: random(index + 251),
+        speed: 0.0022 + random(index + 261) * 0.006,
+        alpha: 0.16 + random(index + 271) * 0.66,
+        tail: 8 + random(index + 281) * 34
+      }));
+    };
 
     const resize = () => {
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(canvas.clientWidth * ratio);
-      canvas.height = Math.floor(canvas.clientHeight * ratio);
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      makePoints();
+      makeOrbs();
+      makeDust();
+    };
+
+    const getScrollProgress = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      return clamp(window.scrollY / maxScroll);
+    };
+
+    const drawSceneWash = (progress: number) => {
+      const violet = clamp((progress - 0.18) / 0.42);
+      const warm = clamp((progress - 0.58) / 0.32);
+      const wash = ctx.createLinearGradient(0, 0, width, height);
+      wash.addColorStop(0, mixColor([5, 16, 42], [30, 18, 78], violet, 0.12 + progress * 0.08));
+      wash.addColorStop(0.55, mixColor([6, 36, 84], [43, 76, 156], violet, 0.13 + warm * 0.05));
+      wash.addColorStop(1, mixColor([3, 40, 84], [255, 130, 76], warm, 0.08 + warm * 0.1));
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, width, height);
+    };
+
+    const drawGlow = (progress: number) => {
+      const warm = clamp((progress - 0.55) / 0.35);
+      const gradient = ctx.createRadialGradient(pointer.x * width, pointer.y * height, 0, pointer.x * width, pointer.y * height, Math.min(width, height) * 0.42);
+      gradient.addColorStop(0, pointer.active ? mixColor([36, 215, 255], [255, 140, 94], warm, 0.18) : mixColor([36, 215, 255], [255, 140, 94], warm, 0.08));
+      gradient.addColorStop(0.34, mixColor([65, 90, 255], [255, 178, 94], warm, 0.08));
+      gradient.addColorStop(1, "rgba(36, 215, 255, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    };
+
+    const drawOrbs = (progress: number) => {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      orbs.forEach((orb, index) => {
+        if (index === 0) return;
+        const time = frame * orb.speed + orb.phase;
+        const pointerPull = pointer.active ? 0.036 : 0.014;
+        const orbit = progress * Math.PI * 1.7 + index;
+        const cx = (orb.x + Math.sin(time + orbit) * (orb.drift + progress * 0.05) + (pointer.x - 0.5) * pointerPull * (index % 2 === 0 ? 1 : -0.72)) * width;
+        const cy = (orb.y + Math.cos(time * 0.86 + orbit) * (orb.drift + progress * 0.035) + (pointer.y - 0.5) * pointerPull * (index % 2 === 0 ? 0.62 : -1)) * height;
+        const radius = orb.radius * (0.84 + Math.min(width, height) / 1300) * (1 + Math.sin(progress * Math.PI + index) * 0.12);
+        const core = ctx.createRadialGradient(cx - radius * 0.28, cy - radius * 0.32, radius * 0.04, cx, cy, radius);
+        orb.palette.forEach(([stop, color]) => core.addColorStop(stop, color));
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        const rimRadius = radius * (0.44 + Math.sin(time * 1.4) * 0.035);
+        const rim = ctx.createRadialGradient(cx + radius * 0.12, cy + radius * 0.08, rimRadius * 0.58, cx + radius * 0.12, cy + radius * 0.08, rimRadius);
+        rim.addColorStop(0, "rgba(255, 255, 255, 0)");
+        rim.addColorStop(0.72, "rgba(255, 255, 255, 0.018)");
+        rim.addColorStop(0.86, orb.ring);
+        rim.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = rim;
+        ctx.beginPath();
+        ctx.arc(cx + radius * 0.12, cy + radius * 0.08, rimRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = orb.ring;
+        ctx.lineWidth = Math.max(0.8, radius * 0.006);
+        ctx.globalAlpha = 0.42;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radius * 0.54, radius * 0.2, time * 0.42, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+      ctx.restore();
+    };
+
+    const drawHeroSphere = (progress: number) => {
+      const orb = orbs[0];
+      if (!orb) return;
+      const stage = clamp(progress * 1.25);
+      const violet = clamp((progress - 0.15) / 0.45);
+      const warm = clamp((progress - 0.58) / 0.34);
+      const particleBloom = 0.78 + Math.sin(progress * Math.PI) * 0.42 + warm * 0.28;
+      const time = frame * orb.speed + orb.phase;
+      const pointerPull = pointer.active ? 0.032 : 0.01;
+      const cx = (mix(0.75, 0.42, stage) + Math.sin(time + progress * Math.PI * 2) * (0.018 + progress * 0.028) + (pointer.x - 0.5) * pointerPull) * width;
+      const cy = (mix(0.82, 0.54, stage) + Math.cos(time * 0.74 + progress * Math.PI) * (0.018 + progress * 0.02) + (pointer.y - 0.5) * pointerPull * 0.5) * height;
+      const radius = Math.max(width, height) * mix(0.38, 0.28, stage) * (1 + Math.sin(progress * Math.PI * 2) * 0.035);
+
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const atmosphere = ctx.createRadialGradient(cx - radius * 0.1, cy - radius * 0.45, radius * 0.12, cx, cy, radius * 1.25);
+      atmosphere.addColorStop(0, mixColor([206, 252, 255], [255, 201, 154], warm, 0.28));
+      atmosphere.addColorStop(0.36, mixColor([34, 219, 255], [154, 97, 255], violet, 0.13 + progress * 0.05));
+      atmosphere.addColorStop(0.72, mixColor([96, 110, 255], [255, 113, 87], warm, 0.09 + warm * 0.04));
+      atmosphere.addColorStop(1, "rgba(6, 18, 46, 0)");
+      ctx.fillStyle = atmosphere;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.25, 0, Math.PI * 2);
+      ctx.fill();
+
+      const body = ctx.createRadialGradient(cx - radius * 0.32, cy - radius * 0.48, radius * 0.05, cx + radius * 0.08, cy + radius * 0.04, radius);
+      body.addColorStop(0, mixColor([245, 255, 255], [255, 235, 206], warm, 0.64));
+      body.addColorStop(0.2, mixColor([122, 241, 255], [255, 152, 112], warm, 0.42));
+      body.addColorStop(0.42, mixColor([104, 132, 255], [152, 100, 255], violet, 0.28 + progress * 0.04));
+      body.addColorStop(0.68, mixColor([33, 82, 178], [199, 72, 132], warm, 0.2));
+      body.addColorStop(1, "rgba(7, 20, 50, 0.02)");
+      ctx.fillStyle = body;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      const rim = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.02);
+      rim.addColorStop(0, "rgba(255, 255, 255, 0)");
+      rim.addColorStop(0.84, mixColor([187, 250, 255], [255, 183, 133], warm, 0.12 + progress * 0.04));
+      rim.addColorStop(0.92, mixColor([255, 255, 255], [255, 218, 184], warm, 0.32 + progress * 0.08));
+      rim.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = rim;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.02, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = mixColor([194, 251, 255], [255, 185, 143], warm, 0.16 + progress * 0.1);
+      ctx.lineWidth = Math.max(1, radius * 0.006);
+      ctx.globalAlpha = 0.54;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, radius * (0.68 + progress * 0.12), radius * (0.22 + progress * 0.05), time * 0.34 + progress * 1.4, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      innerDust.forEach((dust) => {
+        const pulse = Math.sin(frame * dust.speed + dust.phase);
+        const swirl = frame * dust.speed * 0.22 + progress * 1.65;
+        const angle = dust.angle + pulse * 0.11 + swirl;
+        const distance = radius * (dust.distance + dust.spread * 0.1 + progress * 0.12 + Math.sin(swirl + dust.phase) * 0.018);
+        const px = cx + Math.cos(angle) * distance * (1.12 + progress * 0.2) + (pointer.x - 0.5) * 18;
+        const py = cy + Math.sin(angle) * distance * (0.7 + progress * 0.12) + (pointer.y - 0.5) * 12;
+        const glow = dust.tone > 0.78;
+        const alpha = dust.alpha * particleBloom * (0.68 + pulse * 0.22);
+        if (dust.tone > 0.84) {
+          const tailLength = dust.tail * (0.7 + progress * 0.9);
+          ctx.beginPath();
+          ctx.moveTo(px - Math.cos(angle) * tailLength, py - Math.sin(angle) * tailLength * 0.68);
+          ctx.lineTo(px, py);
+          ctx.strokeStyle = `rgba(255, 246, 221, ${alpha * 0.22})`;
+          ctx.lineWidth = Math.max(0.35, dust.size * 0.32);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(px, py, dust.size * (glow ? 1.55 : 1) * (1 + progress * 0.18), 0, Math.PI * 2);
+        ctx.fillStyle =
+          dust.tone > 0.62 || warm > 0.45
+            ? mixColor([255, 118, 86], [255, 174, 92], warm, alpha)
+            : dust.tone > 0.34
+              ? mixColor([250, 186, 95], [170, 104, 255], violet, alpha * 0.72)
+              : mixColor([118, 238, 255], [141, 116, 255], violet, alpha * 0.54);
+        ctx.fill();
+      });
+
+      haloDust.forEach((dust) => {
+        const pulse = Math.sin(frame * dust.speed + dust.phase);
+        const plume = frame * dust.speed * 0.18 + progress * 2.05;
+        const angle = dust.angle + pulse * 0.16 + plume;
+        const distance = radius * (dust.distance + dust.spread * 0.2 + progress * 0.28 + Math.sin(plume + dust.phase) * 0.03);
+        const px = cx + Math.cos(angle) * distance * (1.2 + progress * 0.34) + (pointer.x - 0.5) * 26;
+        const py = cy + Math.sin(angle) * distance * (0.7 + progress * 0.18) + (pointer.y - 0.5) * 18;
+        const alpha = dust.alpha * (0.62 + pulse * 0.24) * (0.9 + progress * 0.55);
+        const tailLength = dust.tail * (0.82 + progress * 1.1);
+        ctx.beginPath();
+        ctx.moveTo(px - Math.cos(angle) * tailLength, py - Math.sin(angle) * tailLength * 0.62);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = dust.tone > 0.72 ? mixColor([255, 255, 255], [255, 225, 190], warm, alpha * 0.26) : mixColor([169, 249, 255], [176, 130, 255], violet, alpha * 0.16);
+        ctx.lineWidth = Math.max(0.35, dust.size * 0.4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(px, py, dust.size * (1 + progress * 0.28), 0, Math.PI * 2);
+        ctx.fillStyle = dust.tone > 0.72 ? mixColor([255, 255, 255], [255, 225, 190], warm, alpha) : mixColor([169, 249, 255], [176, 130, 255], violet, alpha * 0.66);
+        ctx.fill();
+      });
+
+      ctx.restore();
+    };
+
+    const drawConnections = () => {
+      for (let i = 0; i < points.length; i += 1) {
+        const a = points[i];
+        const ax = a.x * width;
+        const ay = a.y * height;
+        for (let j = i + 1; j < points.length; j += 1) {
+          const b = points[j];
+          const bx = b.x * width;
+          const by = b.y * height;
+          const distance = Math.hypot(ax - bx, ay - by);
+          const limit = 112 + (a.layer + b.layer) * 14;
+          if (distance > limit) continue;
+          const midX = (ax + bx) * 0.5;
+          const midY = (ay + by) * 0.5;
+          const pointerDistance = Math.hypot(midX - pointer.x * width, midY - pointer.y * height);
+          const pointerBoost = pointer.active ? Math.max(0, 1 - pointerDistance / 320) : 0.16;
+          const alpha = Math.max(0, 1 - distance / limit) * (0.09 + pointerBoost * 0.28);
+          if (alpha < 0.012) continue;
+          ctx.beginPath();
+          ctx.moveTo(ax, ay);
+          ctx.lineTo(bx, by);
+          ctx.strokeStyle = `rgba(102, 231, 255, ${alpha})`;
+          ctx.lineWidth = 0.5 + pointerBoost * 0.7;
+          ctx.stroke();
+        }
+      }
     };
 
     const draw = () => {
-      const width = canvas.clientWidth;
-      const height = canvas.clientHeight;
+      scroll.target = getScrollProgress();
+      scroll.current += (scroll.target - scroll.current) * 0.075;
       ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = "rgba(37, 211, 255, 0.13)";
-      ctx.lineWidth = 1;
-      points.forEach((p, i) => {
+      pointer.x += (pointer.tx - pointer.x) * 0.06;
+      pointer.y += (pointer.ty - pointer.y) * 0.06;
+      drawSceneWash(scroll.current);
+      drawOrbs(scroll.current);
+      drawHeroSphere(scroll.current);
+      drawGlow(scroll.current);
+      points.forEach((p) => {
         if (!reduced) {
-          p.x += p.vx;
-          p.y += p.vy;
-          if (p.x < 0 || p.x > 1) p.vx *= -1;
-          if (p.y < 0 || p.y > 1) p.vy *= -1;
+          const waveX = Math.sin(frame * 0.006 + p.phase) * 0.00075 * p.layer;
+          const waveY = Math.cos(frame * 0.004 + p.phase * 0.7) * 0.00062 * p.layer;
+          p.x += p.vx + waveX;
+          p.y += p.vy + waveY;
+          p.baseX += p.vx * 0.24;
+          p.baseY += p.vy * 0.24;
+          if (p.x < -0.05) p.x = 1.05;
+          if (p.x > 1.05) p.x = -0.05;
+          if (p.y < -0.05) p.y = 1.05;
+          if (p.y > 1.05) p.y = -0.05;
         }
         const px = p.x * width;
         const py = p.y * height;
@@ -220,85 +579,60 @@ function ParticleField() {
           const dx = px - pointer.x * width;
           const dy = py - pointer.y * height;
           const distance = Math.hypot(dx, dy);
-          if (distance < 180 && distance > 0) {
-            const force = (180 - distance) / 180;
-            p.x += (dx / distance) * force * 0.0013;
-            p.y += (dy / distance) * force * 0.0013;
-          }
-        }
-        ctx.beginPath();
-        ctx.arc(px, py, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = i % 3 === 0 ? "rgba(106, 92, 255, 0.65)" : "rgba(34, 211, 238, 0.75)";
-        ctx.fill();
-        for (let j = i + 1; j < points.length; j += 1) {
-          const next = points[j];
-          const nx = next.x * width;
-          const ny = next.y * height;
-          const distance = Math.hypot(px - nx, py - ny);
-          if (distance < 140) {
-            ctx.globalAlpha = 1 - distance / 140;
-            ctx.beginPath();
-            ctx.moveTo(px, py);
-            ctx.lineTo(nx, ny);
-            ctx.stroke();
-            ctx.globalAlpha = 1;
+          if (distance < 260 && distance > 0) {
+            const force = (1 - distance / 260) ** 2;
+            p.x += (dx / distance) * force * 0.0022 * p.layer;
+            p.y += (dy / distance) * force * 0.0022 * p.layer;
           }
         }
       });
+      drawConnections();
+      points.forEach((p) => {
+        const px = p.x * width;
+        const py = p.y * height;
+        const pointerDistance = Math.hypot(px - pointer.x * width, py - pointer.y * height);
+        const boost = pointer.active ? Math.max(0, 1 - pointerDistance / 220) : 0;
+        const radius = p.radius + boost * 2.4;
+        const alpha = 0.34 + p.layer * 0.16 + boost * 0.4;
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.tone > 0.68 ? `rgba(130, 119, 255, ${alpha})` : `rgba(52, 224, 255, ${alpha})`;
+        ctx.fill();
+        if (boost > 0.08) {
+          ctx.beginPath();
+          ctx.arc(px, py, radius * 4.8, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(36, 215, 255, ${boost * 0.035})`;
+          ctx.fill();
+        }
+      });
       frame += 1;
-      if (!reduced || frame < 2) raf = requestAnimationFrame(draw);
+      if (!reduced || frame < 3) raf = requestAnimationFrame(draw);
     };
 
     const move = (event: PointerEvent) => {
-      pointer.x = event.clientX / window.innerWidth;
-      pointer.y = event.clientY / window.innerHeight;
+      pointer.tx = event.clientX / window.innerWidth;
+      pointer.ty = event.clientY / window.innerHeight;
       pointer.active = true;
+    };
+
+    const leave = () => {
+      pointer.active = false;
     };
 
     resize();
     draw();
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("pointerleave", leave);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerleave", leave);
     };
   }, []);
 
   return <canvas className="particle-field" ref={canvasRef} aria-hidden="true" />;
-}
-
-function RippleLayer() {
-  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
-
-  useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-    let last = 0;
-    let id = 0;
-    const handleMove = (event: PointerEvent) => {
-      const now = performance.now();
-      if (now - last < 130) return;
-      last = now;
-      id += 1;
-      const ripple = { id, x: event.clientX, y: event.clientY };
-      setRipples((items) => [...items.slice(-7), ripple]);
-      window.setTimeout(() => {
-        setRipples((items) => items.filter((item) => item.id !== ripple.id));
-      }, 900);
-    };
-    window.addEventListener("pointermove", handleMove, { passive: true });
-    return () => window.removeEventListener("pointermove", handleMove);
-  }, []);
-
-  return (
-    <div className="ripple-layer" aria-hidden="true">
-      {ripples.map((ripple) => (
-        <span key={ripple.id} style={{ left: ripple.x, top: ripple.y }} />
-      ))}
-    </div>
-  );
 }
 
 function App() {
@@ -353,7 +687,6 @@ function App() {
   return (
     <main>
       <ParticleField />
-      <RippleLayer />
       <nav className="nav">
         <a className="brand" href="#top" aria-label="禹都AI解决方案助手">
           <img src="/assets/yudubid-icon.png" alt="" />
