@@ -87,7 +87,3 @@ src/styles.css    全局样式和响应式布局
 public/assets/    源静态资源与产品截图
 dist/             构建后的可部署静态产物
 ```
-
-## 视觉效果
-
-背景使用 Canvas 绘制粒子场和动态球体效果。球体、粒子密度、星尘发散和色彩会随滚动进度变化，同时支持 `prefers-reduced-motion` 降低动态效果。
