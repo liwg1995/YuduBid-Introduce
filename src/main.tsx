@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkle,
   SquaresFour,
+  Target,
   WindowsLogo
 } from "@phosphor-icons/react";
 import "./styles.css";
@@ -61,6 +62,12 @@ const fallbackRelease: Release = {
 
 const heroSlides = [
   {
+    title: "售前工作台全流程准备",
+    copy: "围绕机会识别、材料导入、客户画像、痛点分析、调研问题、方案架构、页纲和 Word 导出形成闭环。",
+    image: "/assets/presales-workbench.jpg",
+    icon: Target
+  },
+  {
     title: "项目管理全流程协作",
     copy: "贯穿项目创建、需求 PRD、排期推进、风险沟通、交付上线、汇报回款和复盘合规。",
     image: "/assets/project-management.jpg",
@@ -99,6 +106,7 @@ const heroSlides = [
 ];
 
 const heroDeck = [
+  { label: "售前", title: "售前工作台", image: "/assets/presales-workbench.jpg" },
   { label: "项目", title: "项目管理工作台", image: "/assets/project-management.jpg" },
   { label: "论文", title: "论文导师工作台", image: "/assets/thesis-tutor.png" },
   { label: "概览", title: "一站式本地 AI 工作台", image: "/assets/overview.png" },
@@ -113,6 +121,12 @@ const navItems = [
 ];
 
 const screens = [
+  {
+    key: "presales",
+    label: "售前工作台",
+    title: "把售前机会、客户材料、痛点分析、方案架构和交付导出放进同一条链路",
+    image: "/assets/screen-presales-workbench.jpg"
+  },
   {
     key: "project",
     label: "项目管理",
@@ -158,10 +172,10 @@ const screens = [
 ];
 
 const capabilities = [
-  { title: "本地工作区", copy: "项目档案、资料、草稿、模板、论文档案和知识库集中管理，交付过程可回看。", icon: SquaresFour },
+  { title: "本地工作区", copy: "售前项目、项目档案、资料、草稿、模板、论文档案和知识库集中管理，交付过程可回看。", icon: SquaresFour },
   { title: "智能生成", copy: "从资料解析到正文扩写，多任务后台执行，减少重复复制。", icon: MagicWand },
   { title: "闭环交付", copy: "格式检查、润色修订、Word 导出、备份和版本留痕形成稳定流程。", icon: CheckCircle },
-  { title: "知识复用", copy: "把项目复盘、历史方案、论文材料、模板、代码和经验沉淀为可持续复用资产。", icon: ShieldCheck }
+  { title: "知识复用", copy: "把售前方案、项目复盘、历史方案、论文材料、模板、代码和经验沉淀为可持续复用资产。", icon: ShieldCheck }
 ];
 
 function bytesToSize(bytes: number) {
@@ -748,7 +762,7 @@ function App() {
             沉淀资料与经验，交付成果
           </motion.h1>
           <motion.p className="hero-sub" initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
-            面向项目管理、技术标书、公文写作、论文导师、软著和专利的一站式本地 AI 工作台。
+            面向售前工作台、项目管理、技术标书、公文写作、论文导师、软著和专利的一站式本地 AI 工作台。
           </motion.p>
           <motion.div className="hero-actions" initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
             <a className="button primary" href="#download">
@@ -849,7 +863,7 @@ function App() {
       <section className="interactive-suite">
         <div className="suite-copy">
           <h2 className="breath-title">点击模块，查看它能完成什么。</h2>
-          <p>六个核心场景围绕同一套资料、模板、知识和模型配置运转，减少重复整理。</p>
+          <p>七个核心场景围绕同一套资料、模板、知识和模型配置运转，减少重复整理。</p>
           <div className="slide-tabs" role="tablist" aria-label="核心功能">
             {heroSlides.map((slide, index) => {
               const Icon = slide.icon;
@@ -886,7 +900,7 @@ function App() {
       <section id="showcase" className="showcase">
         <div className="showcase-head">
           <h2 className="breath-title">真实功能界面展示</h2>
-          <p>项目管理、论文导师、招投标、公文、软著、专利和配置界面都来自当前软件截图。</p>
+          <p>售前工作台、项目管理、论文导师、招投标、公文、软著、专利和配置界面都来自当前软件截图。</p>
         </div>
         <div className="showcase-tabs" role="tablist" aria-label="界面展示">
           {screens.map((screen) => (
