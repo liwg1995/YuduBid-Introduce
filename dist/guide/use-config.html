@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="配置使用说明，禹都AI解决方案助手本地使用说明。" />
+  <title>配置使用说明 | 禹都AI解决方案助手</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/guide/guide.css" />
+</head>
+<body>
+  <main class="guide-shell">
+    <nav class="guide-nav">
+      <a class="guide-brand" href="/"><img src="/assets/yudubid-icon.png" alt="" /><span>禹都AI解决方案助手</span></a>
+      <div class="guide-nav-actions">
+        <a href="/guide/use-bid.html">技术标书说明</a>
+        <a href="/">返回首页</a>
+      </div>
+    </nav>
+    <header class="guide-hero">
+      <p>本地使用说明</p>
+      <h1>配置使用说明</h1>
+      <span>先完成文本模型、生图模型、解析和技能管理配置，再开始生成业务成果。</span>
+    </header>
+    <article class="guide-content">
+<blockquote>🛠️  本文件描述使用之前的设置，是标书、公文、软著、专利生成的前提。</blockquote>
+<h2>打开软件界面</h2>
+<figure class="guide-shot"><img src="images-jpg/%E9%A6%96%E9%A1%B5.jpg" alt="首页" loading="lazy"><figcaption>首页</figcaption></figure>
+<h2>进入设置界面</h2>
+<h3>进入文本模型设置</h3>
+<figure class="guide-shot"><img src="images-jpg/%E6%96%87%E6%9C%AC%E6%A8%A1%E5%9E%8B%E8%AE%BE%E7%BD%AE.jpg" alt="文本模型设置" loading="lazy"><figcaption>文本模型设置</figcaption></figure>
+<blockquote>该步骤是所有功能的前提，必须进行文本模型的设置。本项目提供<code>Agnes-AI</code>、火山方舟、小米<code>token plan</code>、<code>DeepSeek</code>、龙猫以及自定义方式</blockquote>
+<ul class="guide-list">
+<li>👍推荐使用<code>Agnes-AI</code>，因为提供的模型不收费，前往<a href="https://agnes-ai.com/" target="_blank" rel="noreferrer">agnes-ai</a>进行注册即可，有其他更好的模型，可以自行选择或者自定义</li>
+</ul>
+<ul class="guide-list">
+<li>注册完成后，在后台创建新的密钥</li>
+</ul>
+<figure class="guide-shot"><img src="images-jpg/Agnes-%E5%AF%86%E9%92%A5.jpg" alt="创建密钥" loading="lazy"><figcaption>创建密钥</figcaption></figure>
+<ul class="guide-list">
+<li>模型名称记得点击获取一下，使用当前最新模型<code>agnes-2.0-flash</code>，并测试一下。测试没有问题，点击<span class="ui-token">保存</span>，即可完成文本模型的设置</li>
+</ul>
+<h3>进入生图模型设置</h3>
+<figure class="guide-shot"><img src="images-jpg/%E7%94%9F%E5%9B%BE%E6%A8%A1%E5%9E%8B.jpg" alt="生图模型" loading="lazy"><figcaption>生图模型</figcaption></figure>
+<blockquote>该步骤可做可不做，因为投标文件中的图，若没有生图模型，则使用<code>Mermaid</code>进行生图。本项目提供<code>Agnes-AI</code>、火山方舟、<code>Google AI Studio</code>以及自定义方式</blockquote>
+<ul class="guide-list">
+<li>👍推荐使用<code>Agnes-AI</code>，同样是因为提供的模型不收费，前往<a href="https://agnes-ai.com/" target="_blank" rel="noreferrer">agnes-ai</a>进行注册即可，有其他更好的模型，可以自行选择或者自定义</li>
+</ul>
+<ul class="guide-list">
+<li>模型名称记得点击获取一下，使用当前最新模型<code>agnes-image-2.1-flash</code>，并测试一下，注意这里测试生图可能时间较长，不影响其他的操作。测试没有问题，会显示<span class="ui-token">可用</span>，点击<span class="ui-token">保存</span>，即可完成生图模型的设置</li>
+</ul>
+<h3>文本解析设置</h3>
+<p class="lead">该步骤可以忽略，若是想使用<code>MinerU</code>精确解析，自行注册即可。<span class="ui-token">默认即可</span></p>
+<h3>技能管理设置</h3>
+<figure class="guide-shot"><img src="images-jpg/%E6%8A%80%E8%83%BD%E7%AE%A1%E7%90%86.jpg" alt="技能管理" loading="lazy"><figcaption>技能管理</figcaption></figure>
+<p>技能管理提供<code>word-optimization</code>，用于针对标书的导出进行格式优化，默认不开启，需要的话进行<span class="ui-token">开启</span>即可。</p>
+<h3>关于界面</h3>
+<figure class="guide-shot"><img src="images-jpg/%E5%85%B3%E4%BA%8E.jpg" alt="关于界面" loading="lazy"><figcaption>关于界面</figcaption></figure>
+<ul class="guide-list">
+<li>该界面展示软件版本信息，可检测远程仓库中最新版本，点击<span class="ui-token">检测版本</span>，若远程有更新，即可显示最新版本是什么</li>
+</ul>
+<figure class="guide-shot"><img src="images-jpg/%E6%96%B0%E7%89%88%E6%9C%AC%E6%A3%80%E6%B5%8B.jpg" alt="新版本检测" loading="lazy"><figcaption>新版本检测</figcaption></figure>
+<ul class="guide-list">
+<li>点击<span class="ui-token">NEW</span>，可查看远程最新版本的情况，同时可获取最新版，下载下来覆盖安装即可</li>
+</ul>
+<blockquote><code>Windows</code>、<code>Mac</code>版支持【设置】-【关于】-【检测版本】进行更新，更新方式获取<code>github</code>中最新版本的包并下载。</blockquote>
+<blockquote>以另一种方式支持<code>app</code>内进行更新，但仍然需要重新安装部署，原因是<code>app</code>未签名</blockquote>
+<figure class="guide-shot"><img src="images-jpg/%E6%96%B0%E7%89%88%E8%AF%A6%E6%83%85.jpg" alt="新版详情" loading="lazy"><figcaption>新版详情</figcaption></figure>
+    </article>
+  </main>
+</body>
+</html>

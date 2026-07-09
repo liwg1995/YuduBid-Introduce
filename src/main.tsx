@@ -116,6 +116,7 @@ const heroDeck = [
 const navItems = [
   { href: "#features", label: "功能", icon: Sparkle },
   { href: "#showcase", label: "界面", icon: Images },
+  { href: "#usage", label: "说明", icon: FileDoc },
   { href: "#download", label: "下载", icon: DownloadSimple },
   { href: "https://github.com/liwg1995/YuduBid", label: "开源", icon: Code, external: true }
 ];
@@ -176,6 +177,21 @@ const capabilities = [
   { title: "智能生成", copy: "从资料解析到正文扩写，多任务后台执行，减少重复复制。", icon: MagicWand },
   { title: "闭环交付", copy: "格式检查、润色修订、Word 导出、备份和版本留痕形成稳定流程。", icon: CheckCircle },
   { title: "知识复用", copy: "把售前方案、项目复盘、历史方案、论文材料、模板、代码和经验沉淀为可持续复用资产。", icon: ShieldCheck }
+];
+
+const usagePages = [
+  {
+    title: "配置使用说明",
+    href: "/guide/use-config.html",
+    detail: "完成文本模型、生图模型、文本解析、技能管理和版本检测配置。",
+    points: ["文本模型是所有生成功能的前提", "生图未配置时可回退 Mermaid", "word-optimization 可优化 Word 导出格式"]
+  },
+  {
+    title: "技术标书使用说明",
+    href: "/guide/use-bid.html",
+    detail: "覆盖招标文件上传、解析、生成目录、事实设定、正文生成、扩写编辑和 Word 导出。",
+    points: ["支持只解析关键项或完整解析", "目录可自由生成或按评分项对齐", "正文生成后可审计、修复、扩写和导出"]
+  }
 ];
 
 function bytesToSize(bytes: number) {
@@ -769,6 +785,10 @@ function App() {
               <CloudArrowDown weight="duotone" />
               立即下载
             </a>
+            <a className="button ghost" href="#usage">
+              <FileDoc weight="duotone" />
+              查看使用说明
+            </a>
             <a className="button ghost" href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">
               <GithubLogo />
               liwg1995/YuduBid
@@ -928,6 +948,37 @@ function App() {
           </div>
           <img src={currentScreen.image} alt={`禹都AI解决方案助手${currentScreen.label}界面`} />
         </motion.div>
+      </section>
+
+      <section id="usage" className="usage">
+        <div className="usage-head">
+          <p className="section-kicker">使用说明</p>
+          <h2 className="breath-title">两份说明已转成本地网页。</h2>
+          <p>图片和内容都已放在当前项目内，访问不依赖 GitHub 原文网络。</p>
+        </div>
+        <div className="usage-grid usage-entry-grid">
+          {usagePages.map((item, index) => (
+            <a className="usage-card usage-entry" href={item.href} key={item.title}>
+              <div className="usage-card-head">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{item.title}</h3>
+              </div>
+              <p>{item.detail}</p>
+              <ul>
+                {item.points.map((point) => (
+                  <li key={point}>
+                    <CheckCircle weight="duotone" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <strong>
+                打开本地说明页
+                <ArrowRight />
+              </strong>
+            </a>
+          ))}
+        </div>
       </section>
 
       <section id="download" className="download">
