@@ -10,6 +10,7 @@ import {
   Code,
   DownloadSimple,
   FileDoc,
+  ClipboardText,
   Files,
   GithubLogo,
   Images,
@@ -38,24 +39,24 @@ type Release = {
 };
 
 const fallbackRelease: Release = {
-  tag_name: "v0.4.4",
-  published_at: "2026-06-25T07:57:13Z",
-  html_url: "https://github.com/liwg1995/YuduBid/releases/tag/v0.4.4",
+  tag_name: "v0.7.4",
+  published_at: "2026-07-16T06:16:35Z",
+  html_url: "https://github.com/liwg1995/YuduBid/releases/tag/v0.7.4",
   assets: [
     {
-      name: "YuDuBid-0.4.4-win-x64.exe",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.4.4/YuDuBid-0.4.4-win-x64.exe",
-      size: 170836088
+      name: "YuDuBid-0.7.4-win-x64.exe",
+      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-win-x64.exe",
+      size: 171389402
     },
     {
-      name: "YuDuBid-0.4.4-mac-arm64.dmg",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.4.4/YuDuBid-0.4.4-mac-arm64.dmg",
-      size: 209271723
+      name: "YuDuBid-0.7.4-mac-arm64.dmg",
+      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-mac-arm64.dmg",
+      size: 210405860
     },
     {
-      name: "YuDuBid-0.4.4-mac-x64.dmg",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.4.4/YuDuBid-0.4.4-mac-x64.dmg",
-      size: 214749514
+      name: "YuDuBid-0.7.4-mac-x64.dmg",
+      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-mac-x64.dmg",
+      size: 215894167
     }
   ]
 };
@@ -78,6 +79,12 @@ const heroSlides = [
     copy: "围绕选题、开题、文献综述、研究设计、逐章写作、答辩准备和格式查重形成路径。",
     image: "/assets/thesis-tutor.png",
     icon: FileDoc
+  },
+  {
+    title: "课题申报全流程推进",
+    copy: "从课题建档、启动诊断、选题与政策分析，到申报书撰写、八维质检、评审优化和 Word 导出，形成一条可追踪的申报路线。",
+    image: "/assets/topic-application-promo.png",
+    icon: ClipboardText
   },
   {
     title: "技术标书智能编写",
@@ -109,6 +116,7 @@ const heroDeck = [
   { label: "售前", title: "售前工作台", image: "/assets/presales-workbench.jpg" },
   { label: "项目", title: "项目管理工作台", image: "/assets/project-management.jpg" },
   { label: "论文", title: "论文导师工作台", image: "/assets/thesis-tutor.png" },
+  { label: "课题", title: "课题申报工作台", image: "/assets/topic-application-promo.png" },
   { label: "概览", title: "一站式本地 AI 工作台", image: "/assets/overview.png" },
   { label: "总结", title: "本地工作台与知识复用闭环", image: "/assets/summary.png" }
 ];
@@ -139,6 +147,12 @@ const screens = [
     label: "论文导师",
     title: "先定位论文阶段，再生成能走下去的诊断路线和写作档案",
     image: "/assets/screen-thesis.png"
+  },
+  {
+    key: "topic-application",
+    label: "课题申报",
+    title: "从课题档案到申报书导出，逐阶段推进准备、撰写、检查和答辩",
+    image: "/assets/topic-application-screen.png"
   },
   {
     key: "bid",
