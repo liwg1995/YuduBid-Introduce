@@ -967,8 +967,8 @@ function App() {
       <section id="usage" className="usage">
         <div className="usage-head">
           <p className="section-kicker">使用说明</p>
-          <h2 className="breath-title">两份说明已转成本地网页。</h2>
-          <p>图片和内容都已放在当前项目内，访问不依赖 GitHub 原文网络。</p>
+          <h2 className="breath-title">从配置开始，逐步完成工作。</h2>
+          <p>无论是第一次配置模型，还是开始编写技术标书，都可以从对应指南快速上手。</p>
         </div>
         <div className="usage-grid usage-entry-grid">
           {usagePages.map((item, index) => (
@@ -987,7 +987,7 @@ function App() {
                 ))}
               </ul>
               <strong>
-                打开本地说明页
+                查看使用指南
                 <ArrowRight />
               </strong>
             </a>
