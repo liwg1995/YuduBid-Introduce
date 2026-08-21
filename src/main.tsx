@@ -38,29 +38,6 @@ type Release = {
   assets: ReleaseAsset[];
 };
 
-const fallbackRelease: Release = {
-  tag_name: "v0.7.4",
-  published_at: "2026-07-16T06:16:35Z",
-  html_url: "https://github.com/liwg1995/YuduBid/releases/tag/v0.7.4",
-  assets: [
-    {
-      name: "YuDuBid-0.7.4-win-x64.exe",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-win-x64.exe",
-      size: 171389402
-    },
-    {
-      name: "YuDuBid-0.7.4-mac-arm64.dmg",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-mac-arm64.dmg",
-      size: 210405860
-    },
-    {
-      name: "YuDuBid-0.7.4-mac-x64.dmg",
-      browser_download_url: "https://github.com/liwg1995/YuduBid/releases/download/v0.7.4/YuDuBid-0.7.4-mac-x64.dmg",
-      size: 215894167
-    }
-  ]
-};
-
 const heroSlides = [
   {
     title: "售前工作台全流程准备",
@@ -218,13 +195,14 @@ function pickAsset(release: Release, matcher: (asset: ReleaseAsset) => boolean) 
 }
 
 function useRelease() {
-  const [release, setRelease] = useState<Release>(fallbackRelease);
+  const [release, setRelease] = useState<Release | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("https://api.github.com/repos/liwg1995/YuduBid/releases/latest", {
+    fetch(`https://api.github.com/repos/liwg1995/YuduBid/releases/latest?ts=${Date.now()}`, {
       signal: controller.signal,
+      cache: "no-store",
       headers: { Accept: "application/vnd.github+json" }
     })
       .then((res) => {
@@ -232,6 +210,9 @@ function useRelease() {
         return res.json();
       })
       .then((data: Release) => {
+        if (!data.tag_name || !data.published_at || !data.html_url || !Array.isArray(data.assets)) {
+          throw new Error("invalid release response");
+        }
         setRelease(data);
         setStatus("ready");
       })
@@ -741,15 +722,19 @@ function App() {
   }, [reduce]);
 
   const downloads = useMemo(() => {
-    const windows = pickAsset(release, (asset) => asset.name.endsWith(".exe") && asset.name.toLowerCase().includes("win"));
-    const macArm = pickAsset(release, (asset) => asset.name.endsWith(".dmg") && asset.name.toLowerCase().includes("arm64"));
-    const macIntel = pickAsset(release, (asset) => asset.name.endsWith(".dmg") && asset.name.toLowerCase().includes("x64"));
+    const windows = release && pickAsset(release, (asset) => asset.name.endsWith(".exe") && asset.name.toLowerCase().includes("win"));
+    const macArm = release && pickAsset(release, (asset) => asset.name.endsWith(".dmg") && asset.name.toLowerCase().includes("arm64"));
+    const macIntel = release && pickAsset(release, (asset) => asset.name.endsWith(".dmg") && asset.name.toLowerCase().includes("x64"));
     return [
       { label: "Windows", detail: "x64 exe 安装包", icon: WindowsLogo, asset: windows },
       { label: "macOS", detail: "Apple 芯片 dmg", icon: AppleLogo, asset: macArm },
       { label: "macOS", detail: "Intel x86 dmg", icon: AppleLogo, asset: macIntel }
     ];
   }, [release]);
+
+  const releaseDate = release
+    ? new Date(release.published_at).toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })
+    : null;
 
   const currentScreen = screens.find((item) => item.key === activeScreen) ?? screens[0];
   const currentSlide = heroSlides[activeSlide];
@@ -999,8 +984,13 @@ function App() {
         <div className="download-copy">
           <h2 className="breath-title">获取最新版</h2>
           <p>
-            当前最新版本 <strong>{release.tag_name}</strong>，发布于{" "}
-            {new Date(release.published_at).toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })}。
+            {release ? (
+              <>当前最新版本 <strong>{release.tag_name}</strong>，发布于 {releaseDate}。</>
+            ) : status === "loading" ? (
+              "正在从 GitHub 获取最新版本…"
+            ) : (
+              "暂时无法获取最新版本，请稍后刷新重试。"
+            )}
           </p>
           <a className="repo-link" href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">
             <GithubLogo />
@@ -1016,7 +1006,7 @@ function App() {
               <a
                 className={`download-card ${disabled ? "disabled" : ""}`}
                 key={`${item.label}-${item.detail}`}
-                href={item.asset?.browser_download_url ?? release.html_url}
+                href={item.asset?.browser_download_url ?? release?.html_url ?? "https://github.com/liwg1995/YuduBid/releases"}
                 target="_blank"
                 rel="noreferrer"
                 aria-disabled={disabled}
@@ -1034,7 +1024,7 @@ function App() {
 
       <footer>
         <span>Copyright © 2026 禹都一只猫</span>
-        <a href={release.html_url} target="_blank" rel="noreferrer">GitHub Releases</a>
+        <a href={release?.html_url ?? "https://github.com/liwg1995/YuduBid/releases"} target="_blank" rel="noreferrer">GitHub Releases</a>
       </footer>
     </main>
   );
