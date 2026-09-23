@@ -290,8 +290,69 @@ h1 {
 }
 
 .hero-stage {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  position: relative;
+  isolation: isolate;
   perspective: 1400px;
   width: 100%;
+  padding: 34px 12px 62px;
+}
+
+.hero-stage::before {
+  content: "";
+  position: absolute;
+  inset: 4% 7% 13%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(36, 215, 255, 0.25), rgba(36, 215, 255, 0.055) 48%, transparent 72%);
+  filter: blur(26px);
+  pointer-events: none;
+}
+
+.hero-orbit {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 114%;
+  height: 79%;
+  border: 1px solid rgba(96, 225, 255, 0.28);
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(36, 215, 255, 0.1), inset 0 0 25px rgba(36, 215, 255, 0.06);
+  pointer-events: none;
+}
+
+.hero-orbit-back {
+  z-index: -1;
+  transform: translate(-50%, -50%) rotate(-19deg) rotateX(67deg);
+}
+
+.hero-orbit-front {
+  z-index: 4;
+  width: 123%;
+  height: 91%;
+  border-color: rgba(151, 242, 255, 0.23);
+  border-top-color: transparent;
+  border-left-color: rgba(151, 242, 255, 0.07);
+  transform: translate(-50%, -44%) rotate(-19deg) rotateX(68deg);
+  filter: drop-shadow(0 0 12px rgba(36, 215, 255, 0.35));
+}
+
+.hero-floor {
+  position: absolute;
+  z-index: -1;
+  left: 8%;
+  right: 8%;
+  bottom: -10%;
+  height: 48%;
+  background-image: linear-gradient(rgba(74, 210, 255, 0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(74, 210, 255, 0.18) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse at 50% 20%, #000 5%, transparent 72%);
+  transform: rotateX(67deg);
+  transform-origin: center top;
+  pointer-events: none;
 }
 
 .hero-deck,
@@ -314,14 +375,45 @@ h1 {
 
 .hero-deck {
   position: relative;
+  z-index: 2;
   aspect-ratio: 1672 / 941;
   min-height: 0;
   transform-style: preserve-3d;
   overflow: visible;
   padding: 0;
   background:
-    radial-gradient(circle at 70% 0%, rgba(36, 215, 255, 0.14), transparent 42%),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(36, 215, 255, 0.2), transparent 42%),
     rgba(12, 28, 62, 0.54);
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(24px);
+  transition: transform 240ms ease-out, background-position 240ms ease-out;
+  box-shadow: 0 44px 90px rgba(0, 4, 22, 0.5), 0 0 0 1px rgba(135, 227, 255, 0.16), 0 0 70px rgba(36, 215, 255, 0.14);
+}
+
+.deck-chrome {
+  position: absolute;
+  z-index: 12;
+  top: 23px;
+  left: 23px;
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(197, 240, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(3, 16, 42, 0.55);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
+.deck-chrome span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(188, 235, 255, 0.46);
+}
+
+.deck-chrome span:first-child {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 
 .hero-deck::before {
@@ -507,19 +599,6 @@ h1 {
     radial-gradient(circle at 100% 0%, rgba(36, 215, 255, 0.16), transparent 42%),
     var(--panel);
   transition: transform 0.25s ease, border-color 0.25s ease;
-  animation: cardDrift 7s ease-in-out infinite;
-}
-
-.capability-card:nth-child(2) {
-  animation-delay: 0.8s;
-}
-
-.capability-card:nth-child(3) {
-  animation-delay: 1.6s;
-}
-
-.capability-card:nth-child(4) {
-  animation-delay: 2.4s;
 }
 
 .capability-card:hover {
@@ -1053,12 +1132,6 @@ footer a {
   color: #d8eaff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .feature-orbit img {
-    animation: floatImage 8s ease-in-out infinite;
-  }
-}
-
 @keyframes titleBreath {
   0%,
   100% {
@@ -1108,16 +1181,6 @@ footer a {
   }
   50% {
     box-shadow: 0 18px 60px rgba(36, 215, 255, 0.32);
-  }
-}
-
-@keyframes floatImage {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.018);
   }
 }
 
@@ -1209,6 +1272,20 @@ footer a {
     transform: none;
   }
 
+  .hero-stage {
+    padding: 12px 2px 24px;
+  }
+
+  .hero-orbit,
+  .hero-floor {
+    display: none;
+  }
+
+  .deck-chrome {
+    top: 14px;
+    left: 14px;
+  }
+
   .mission,
   .interactive-suite,
   .usage,
@@ -1272,14 +1349,38 @@ footer a {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero-deck {
+    transform: none;
+    transition: none;
+  }
+
+  .hero-orbit,
+  .hero-floor {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .nav {
-    align-items: flex-start;
+    display: grid;
+    gap: 4px;
+    padding: 10px 10px 6px;
   }
 
   .nav-links {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    flex: 0 0 auto;
   }
 
   .hero-actions {

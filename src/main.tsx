@@ -702,25 +702,6 @@ function App() {
     return () => window.clearInterval(timer);
   }, [reduce]);
 
-  useEffect(() => {
-    if (reduce) return;
-    const timer = window.setInterval(() => {
-      setActiveSlide((index) => (index + 1) % heroSlides.length);
-    }, 5200);
-    return () => window.clearInterval(timer);
-  }, [reduce]);
-
-  useEffect(() => {
-    if (reduce) return;
-    const timer = window.setInterval(() => {
-      setActiveScreen((key) => {
-        const index = screens.findIndex((screen) => screen.key === key);
-        return screens[(index + 1) % screens.length].key;
-      });
-    }, 5600);
-    return () => window.clearInterval(timer);
-  }, [reduce]);
-
   const downloads = useMemo(() => {
     const windows = release && pickAsset(release, (asset) => asset.name.endsWith(".exe") && asset.name.toLowerCase().includes("win"));
     const macArm = release && pickAsset(release, (asset) => asset.name.endsWith(".dmg") && asset.name.toLowerCase().includes("arm64"));
@@ -800,8 +781,26 @@ function App() {
           initial={reduce ? false : { opacity: 0, rotateY: -10, y: 26 }}
           animate={{ opacity: 1, rotateY: 0, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          onPointerMove={(event) => {
+            if (reduce || event.pointerType === "touch") return;
+            const bounds = event.currentTarget.getBoundingClientRect();
+            const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+            const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+            event.currentTarget.style.setProperty("--tilt-x", `${-y * 7}deg`);
+            event.currentTarget.style.setProperty("--tilt-y", `${x * 9}deg`);
+            event.currentTarget.style.setProperty("--pointer-x", `${(x + 0.5) * 100}%`);
+            event.currentTarget.style.setProperty("--pointer-y", `${(y + 0.5) * 100}%`);
+          }}
+          onPointerLeave={(event) => {
+            event.currentTarget.style.setProperty("--tilt-x", "0deg");
+            event.currentTarget.style.setProperty("--tilt-y", "0deg");
+            event.currentTarget.style.setProperty("--pointer-x", "50%");
+            event.currentTarget.style.setProperty("--pointer-y", "50%");
+          }}
         >
+          <div className="hero-orbit hero-orbit-back" aria-hidden="true" />
           <div className="hero-deck" aria-label="软件宣传图幻灯片">
+            <div className="deck-chrome" aria-hidden="true"><span /><span /><span /></div>
             {heroDeck.map((slide, index) => {
               const active = index === activeHero;
               return (
@@ -840,6 +839,8 @@ function App() {
               ))}
             </div>
           </div>
+          <div className="hero-orbit hero-orbit-front" aria-hidden="true" />
+          <div className="hero-floor" aria-hidden="true" />
         </motion.div>
       </section>
 
