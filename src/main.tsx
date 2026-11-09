@@ -1,28 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { motion, useReducedMotion } from "motion/react";
-import {
-  AppleLogo,
-  ArrowRight,
-  BracketsCurly,
-  CheckCircle,
-  CloudArrowDown,
-  Code,
-  DownloadSimple,
-  FileDoc,
-  ClipboardText,
-  Files,
-  GithubLogo,
-  Images,
-  Lightbulb,
-  MagicWand,
-  PenNib,
-  ShieldCheck,
-  Sparkle,
-  SquaresFour,
-  Target,
-  WindowsLogo
-} from "@phosphor-icons/react";
+import { AppleLogo, ArrowRight, GithubLogo, MagnifyingGlassPlus, WindowsLogo, X } from "@phosphor-icons/react";
 import "./styles.css";
 
 type ReleaseAsset = {
@@ -38,136 +16,54 @@ type Release = {
   assets: ReleaseAsset[];
 };
 
-const heroSlides = [
-  {
-    title: "售前工作台全流程准备",
-    copy: "围绕机会识别、材料导入、客户画像、痛点分析、调研问题、方案架构、页纲和 Word 导出形成闭环。",
-    image: "/assets/presales-workbench.jpg",
-    icon: Target
-  },
-  {
-    title: "项目管理全流程协作",
-    copy: "贯穿项目创建、需求 PRD、排期推进、风险沟通、交付上线、汇报回款和复盘合规。",
-    image: "/assets/project-management.jpg",
-    icon: SquaresFour
-  },
-  {
-    title: "论文导师全流程辅助",
-    copy: "围绕选题、开题、文献综述、研究设计、逐章写作、答辩准备和格式查重形成路径。",
-    image: "/assets/thesis-tutor.png",
-    icon: FileDoc
-  },
-  {
-    title: "课题申报全流程推进",
-    copy: "从课题建档、启动诊断、选题与政策分析，到申报书撰写、八维质检、评审优化和 Word 导出，形成一条可追踪的申报路线。",
-    image: "/assets/topic-application-promo.png",
-    icon: ClipboardText
-  },
-  {
-    title: "技术标书智能编写",
-    copy: "解析招标资料，生成目录正文，复用历史方案并检查废标风险。",
-    image: "/assets/bid-tech.png",
-    icon: Files
-  },
-  {
-    title: "公文写作更高效",
-    copy: "覆盖通知、请示、报告、函和方案，支持起草、检查、润色与导出。",
-    image: "/assets/document-writing.png",
-    icon: PenNib
-  },
-  {
-    title: "软著材料一键整理",
-    copy: "从代码和说明材料生成申请表、用户手册、交付清单和归档包。",
-    image: "/assets/software-copyright.png",
-    icon: BracketsCurly
-  },
-  {
-    title: "国家专利挖掘",
-    copy: "从项目资料、代码和技术说明里提取可保护技术点，生成交底书。",
-    image: "/assets/patent.png",
-    icon: Lightbulb
-  }
-];
+const heroTitle = "从资料，到成果。";
 
-const heroDeck = [
-  { label: "售前", title: "售前工作台", image: "/assets/presales-workbench.jpg" },
-  { label: "项目", title: "项目管理工作台", image: "/assets/project-management.jpg" },
-  { label: "论文", title: "论文导师工作台", image: "/assets/thesis-tutor.png" },
-  { label: "课题", title: "课题申报工作台", image: "/assets/topic-application-promo.png" },
-  { label: "概览", title: "一站式本地 AI 工作台", image: "/assets/overview.png" },
-  { label: "总结", title: "本地工作台与知识复用闭环", image: "/assets/summary.png" }
-];
-
-const navItems = [
-  { href: "#features", label: "功能", icon: Sparkle },
-  { href: "#showcase", label: "界面", icon: Images },
-  { href: "#usage", label: "说明", icon: FileDoc },
-  { href: "#download", label: "下载", icon: DownloadSimple },
-  { href: "https://github.com/liwg1995/YuduBid", label: "开源", icon: Code, external: true }
-];
-
-const screens = [
+const workspaceScreens = [
   {
     key: "presales",
     label: "售前工作台",
-    title: "把售前机会、客户材料、痛点分析、方案架构和交付导出放进同一条链路",
-    image: "/assets/screen-presales-workbench.jpg"
+    title: "从客户需求到售前方案"
   },
   {
     key: "project",
-    label: "项目管理",
-    title: "把项目从计划、推进、交付、复盘到合规收拢成一个工作台",
-    image: "/assets/screen-project-management.jpg"
+    label: "项目协作",
+    title: "从项目计划到交付复盘"
   },
   {
     key: "thesis",
     label: "论文导师",
-    title: "先定位论文阶段，再生成能走下去的诊断路线和写作档案",
-    image: "/assets/screen-thesis.png"
+    title: "从选题开题到写作答辩"
   },
   {
     key: "topic-application",
     label: "课题申报",
-    title: "从课题档案到申报书导出，逐阶段推进准备、撰写、检查和答辩",
-    image: "/assets/topic-application-screen.png"
-  },
-  {
-    key: "bid",
-    label: "招投标",
-    title: "标书目录、正文生成和交付检查在同一条链路完成",
-    image: "/assets/screen-bid.png"
+    title: "从课题建档到申报书导出"
   },
   {
     key: "doc",
     label: "公文",
-    title: "把文种规则、事实要素和降 AI 味检查收拢到起草台",
-    image: "/assets/screen-doc.png"
+    title: "起草、检查与润色公文"
   },
   {
     key: "copyright",
     label: "软著",
-    title: "扫描项目源码，确认材料范围，生成可复用软著素材",
-    image: "/assets/screen-copyright.png"
+    title: "整理源码，生成软著材料"
   },
   {
     key: "patent",
     label: "专利",
-    title: "筛出真正值得保护的技术点，沉淀交底书结构",
-    image: "/assets/screen-patent.png"
+    title: "挖掘专利点，生成交底书"
   },
   {
     key: "settings",
     label: "配置",
-    title: "本地保存模型配置，文本、生图、解析和技能独立管理",
-    image: "/assets/screen-settings.png"
+    title: "管理模型、解析与技能配置"
   }
 ];
 
-const capabilities = [
-  { title: "本地工作区", copy: "售前项目、项目档案、资料、草稿、模板、论文档案和知识库集中管理，交付过程可回看。", icon: SquaresFour },
-  { title: "智能生成", copy: "从资料解析到正文扩写，多任务后台执行，减少重复复制。", icon: MagicWand },
-  { title: "闭环交付", copy: "格式检查、润色修订、Word 导出、备份和版本留痕形成稳定流程。", icon: CheckCircle },
-  { title: "知识复用", copy: "把售前方案、项目复盘、历史方案、论文材料、模板、代码和经验沉淀为可持续复用资产。", icon: ShieldCheck }
+const workspaceVersions = [
+  { key: "new", label: "启象" },
+  { key: "old", label: "守矩" }
 ];
 
 const usagePages = [
@@ -225,482 +121,75 @@ function useRelease() {
   return { release, status };
 }
 
-function ParticleField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const bidScreens = [
+  {
+    key: "bid",
+    label: "正文工作台",
+    title: "标书目录、正文生成和交付检查在同一条链路完成",
+    image: "/assets/ui-bid-writing.webp"
+  },
+  { key: "bid-config", label: "生成设置", title: "配置生成范围、篇幅、配图和导出样式", image: "/assets/ui-bid-config.webp" },
+  { key: "knowledge", label: "知识库", title: "从历史方案提取知识条目，随时回看原文", image: "/assets/ui-knowledge.webp" },
+  { key: "duplicate", label: "标书查重", title: "从元数据、目录、正文和图片四个维度比对标书", image: "/assets/ui-duplicate.webp" },
+  { key: "anonymous", label: "暗标检查", title: "按预设核查页面、正文格式和身份痕迹", image: "/assets/ui-anonymous.webp" },
+  { key: "rejection", label: "废标项检查", title: "并排核对招标要求与投标文件", image: "/assets/ui-rejection.webp" },
+  { key: "opportunity", label: "投标机会", title: "筛选公告、研判机会并记录跟进进度", image: "/assets/ui-opportunity.webp" }
+];
+
+function TypingTitle() {
+  const [visibleCount, setVisibleCount] = useState(heroTitle.length);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let raf = 0;
-    let frame = 0;
-    let width = 0;
-    let height = 0;
-    const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, active: false };
-    const scroll = { current: 0, target: 0 };
-    const seed = 42;
-    const random = (index: number) => {
-      const value = Math.sin(index * 999 + seed) * 10000;
-      return value - Math.floor(value);
-    };
-    const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-    const mix = (from: number, to: number, amount: number) => from + (to - from) * amount;
-    const rgba = (r: number, g: number, b: number, a: number) => `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
-    const mixColor = (from: [number, number, number], to: [number, number, number], amount: number, alpha: number) =>
-      rgba(mix(from[0], to[0], amount), mix(from[1], to[1], amount), mix(from[2], to[2], amount), alpha);
-    type Point = {
-      x: number;
-      y: number;
-      baseX: number;
-      baseY: number;
-      vx: number;
-      vy: number;
-      layer: number;
-      phase: number;
-      radius: number;
-      tone: number;
-    };
-    type Orb = {
-      x: number;
-      y: number;
-      radius: number;
-      drift: number;
-      phase: number;
-      palette: Array<[number, string]>;
-      ring: string;
-      speed: number;
-    };
-    type Dust = {
-      angle: number;
-      distance: number;
-      spread: number;
-      size: number;
-      phase: number;
-      tone: number;
-      speed: number;
-      alpha: number;
-      tail: number;
-    };
-    let points: Point[] = [];
-    let orbs: Orb[] = [];
-    let innerDust: Dust[] = [];
-    let haloDust: Dust[] = [];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number;
 
-    const makePoints = () => {
-      const count = width < 720 ? 58 : width < 1100 ? 82 : 112;
-      points = Array.from({ length: count }, (_, index) => {
-        const layer = 0.55 + random(index + 11) * 1.45;
-        const baseX = random(index + 21);
-        const baseY = random(index + 31);
-        return {
-          x: baseX,
-          y: baseY,
-          baseX,
-          baseY,
-          vx: (random(index + 41) - 0.5) * 0.0007,
-          vy: (random(index + 51) - 0.5) * 0.0007,
-          layer,
-          phase: random(index + 61) * Math.PI * 2,
-          radius: 0.65 + random(index + 71) * 1.9,
-          tone: random(index + 81)
-        };
-      });
-    };
+    function type(count: number) {
+      setVisibleCount(count);
+      timer = window.setTimeout(
+        () => type(count === heroTitle.length ? 0 : count + 1),
+        count === heroTitle.length ? 4200 : 125
+      );
+    }
 
-    const makeOrbs = () => {
-      const scale = Math.min(width, 1280) / 1280;
-      orbs = [
-        {
-          x: 0.75,
-          y: 0.82,
-          radius: 430 + 190 * scale,
-          drift: 0.028,
-          phase: 0.2,
-          palette: [
-            [0, "rgba(232, 252, 255, 0.46)"],
-            [0.16, "rgba(95, 239, 255, 0.34)"],
-            [0.42, "rgba(88, 111, 255, 0.24)"],
-            [0.72, "rgba(18, 45, 112, 0.16)"],
-            [1, "rgba(7, 20, 50, 0)"]
-          ],
-          ring: "rgba(188, 250, 255, 0.25)",
-          speed: 0.0034
-        },
-        {
-          x: 0.17,
-          y: 0.7,
-          radius: 92 + 48 * scale,
-          drift: 0.022,
-          phase: 2.4,
-          palette: [
-            [0, "rgba(112, 97, 255, 0.32)"],
-            [0.32, "rgba(38, 218, 255, 0.26)"],
-            [0.72, "rgba(25, 55, 118, 0.18)"],
-            [1, "rgba(6, 18, 46, 0)"]
-          ],
-          ring: "rgba(116, 128, 255, 0.22)",
-          speed: 0.0028
-        },
-        {
-          x: 0.54,
-          y: 0.48,
-          radius: 70 + 32 * scale,
-          drift: 0.018,
-          phase: 4.1,
-          palette: [
-            [0, "rgba(241, 252, 255, 0.48)"],
-            [0.22, "rgba(89, 232, 255, 0.26)"],
-            [0.64, "rgba(28, 94, 190, 0.16)"],
-            [1, "rgba(6, 18, 46, 0)"]
-          ],
-          ring: "rgba(220, 252, 255, 0.2)",
-          speed: 0.0038
-        }
-      ];
-    };
+    function syncMotion() {
+      window.clearTimeout(timer);
+      if (reducedMotion.matches) setVisibleCount(heroTitle.length);
+      else type(0);
+    }
 
-    const makeDust = () => {
-      const innerCount = width < 720 ? 420 : width < 1100 ? 760 : 1120;
-      const haloCount = width < 720 ? 360 : width < 1100 ? 680 : 980;
-      innerDust = Array.from({ length: innerCount }, (_, index) => ({
-        angle: -Math.PI * 0.96 + random(index + 101) * Math.PI * 1.06,
-        distance: 0.11 + random(index + 111) ** 0.78 * 0.68,
-        spread: (random(index + 121) - 0.5) * 0.28,
-        size: 0.55 + random(index + 131) * 2.35,
-        phase: random(index + 141) * Math.PI * 2,
-        tone: random(index + 151),
-        speed: 0.003 + random(index + 161) * 0.008,
-        alpha: 0.14 + random(index + 171) * 0.7,
-        tail: 2 + random(index + 181) * 12
-      }));
-      haloDust = Array.from({ length: haloCount }, (_, index) => ({
-        angle: -Math.PI * 1.04 + random(index + 201) * Math.PI * 1.16,
-        distance: 0.82 + random(index + 211) ** 0.48 * 0.48,
-        spread: (random(index + 221) - 0.5) * 0.56,
-        size: 0.45 + random(index + 231) * 2.15,
-        phase: random(index + 241) * Math.PI * 2,
-        tone: random(index + 251),
-        speed: 0.0022 + random(index + 261) * 0.006,
-        alpha: 0.16 + random(index + 271) * 0.66,
-        tail: 8 + random(index + 281) * 34
-      }));
-    };
-
-    const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      width = canvas.clientWidth;
-      height = canvas.clientHeight;
-      canvas.width = Math.floor(width * ratio);
-      canvas.height = Math.floor(height * ratio);
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      makePoints();
-      makeOrbs();
-      makeDust();
-    };
-
-    const getScrollProgress = () => {
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      return clamp(window.scrollY / maxScroll);
-    };
-
-    const drawSceneWash = (progress: number) => {
-      const violet = clamp((progress - 0.18) / 0.42);
-      const warm = clamp((progress - 0.58) / 0.32);
-      const wash = ctx.createLinearGradient(0, 0, width, height);
-      wash.addColorStop(0, mixColor([5, 16, 42], [30, 18, 78], violet, 0.12 + progress * 0.08));
-      wash.addColorStop(0.55, mixColor([6, 36, 84], [43, 76, 156], violet, 0.13 + warm * 0.05));
-      wash.addColorStop(1, mixColor([3, 40, 84], [255, 130, 76], warm, 0.08 + warm * 0.1));
-      ctx.fillStyle = wash;
-      ctx.fillRect(0, 0, width, height);
-    };
-
-    const drawGlow = (progress: number) => {
-      const warm = clamp((progress - 0.55) / 0.35);
-      const gradient = ctx.createRadialGradient(pointer.x * width, pointer.y * height, 0, pointer.x * width, pointer.y * height, Math.min(width, height) * 0.42);
-      gradient.addColorStop(0, pointer.active ? mixColor([36, 215, 255], [255, 140, 94], warm, 0.18) : mixColor([36, 215, 255], [255, 140, 94], warm, 0.08));
-      gradient.addColorStop(0.34, mixColor([65, 90, 255], [255, 178, 94], warm, 0.08));
-      gradient.addColorStop(1, "rgba(36, 215, 255, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, width, height);
-    };
-
-    const drawOrbs = (progress: number) => {
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      orbs.forEach((orb, index) => {
-        if (index === 0) return;
-        const time = frame * orb.speed + orb.phase;
-        const pointerPull = pointer.active ? 0.036 : 0.014;
-        const orbit = progress * Math.PI * 1.7 + index;
-        const cx = (orb.x + Math.sin(time + orbit) * (orb.drift + progress * 0.05) + (pointer.x - 0.5) * pointerPull * (index % 2 === 0 ? 1 : -0.72)) * width;
-        const cy = (orb.y + Math.cos(time * 0.86 + orbit) * (orb.drift + progress * 0.035) + (pointer.y - 0.5) * pointerPull * (index % 2 === 0 ? 0.62 : -1)) * height;
-        const radius = orb.radius * (0.84 + Math.min(width, height) / 1300) * (1 + Math.sin(progress * Math.PI + index) * 0.12);
-        const core = ctx.createRadialGradient(cx - radius * 0.28, cy - radius * 0.32, radius * 0.04, cx, cy, radius);
-        orb.palette.forEach(([stop, color]) => core.addColorStop(stop, color));
-        ctx.fillStyle = core;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        const rimRadius = radius * (0.44 + Math.sin(time * 1.4) * 0.035);
-        const rim = ctx.createRadialGradient(cx + radius * 0.12, cy + radius * 0.08, rimRadius * 0.58, cx + radius * 0.12, cy + radius * 0.08, rimRadius);
-        rim.addColorStop(0, "rgba(255, 255, 255, 0)");
-        rim.addColorStop(0.72, "rgba(255, 255, 255, 0.018)");
-        rim.addColorStop(0.86, orb.ring);
-        rim.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.fillStyle = rim;
-        ctx.beginPath();
-        ctx.arc(cx + radius * 0.12, cy + radius * 0.08, rimRadius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = orb.ring;
-        ctx.lineWidth = Math.max(0.8, radius * 0.006);
-        ctx.globalAlpha = 0.42;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, radius * 0.54, radius * 0.2, time * 0.42, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      });
-      ctx.restore();
-    };
-
-    const drawHeroSphere = (progress: number) => {
-      const orb = orbs[0];
-      if (!orb) return;
-      const stage = clamp(progress * 1.25);
-      const violet = clamp((progress - 0.15) / 0.45);
-      const warm = clamp((progress - 0.58) / 0.34);
-      const particleBloom = 0.78 + Math.sin(progress * Math.PI) * 0.42 + warm * 0.28;
-      const time = frame * orb.speed + orb.phase;
-      const pointerPull = pointer.active ? 0.032 : 0.01;
-      const cx = (mix(0.75, 0.42, stage) + Math.sin(time + progress * Math.PI * 2) * (0.018 + progress * 0.028) + (pointer.x - 0.5) * pointerPull) * width;
-      const cy = (mix(0.82, 0.54, stage) + Math.cos(time * 0.74 + progress * Math.PI) * (0.018 + progress * 0.02) + (pointer.y - 0.5) * pointerPull * 0.5) * height;
-      const radius = Math.max(width, height) * mix(0.38, 0.28, stage) * (1 + Math.sin(progress * Math.PI * 2) * 0.035);
-
-      ctx.save();
-      ctx.globalCompositeOperation = "lighter";
-      const atmosphere = ctx.createRadialGradient(cx - radius * 0.1, cy - radius * 0.45, radius * 0.12, cx, cy, radius * 1.25);
-      atmosphere.addColorStop(0, mixColor([206, 252, 255], [255, 201, 154], warm, 0.28));
-      atmosphere.addColorStop(0.36, mixColor([34, 219, 255], [154, 97, 255], violet, 0.13 + progress * 0.05));
-      atmosphere.addColorStop(0.72, mixColor([96, 110, 255], [255, 113, 87], warm, 0.09 + warm * 0.04));
-      atmosphere.addColorStop(1, "rgba(6, 18, 46, 0)");
-      ctx.fillStyle = atmosphere;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.25, 0, Math.PI * 2);
-      ctx.fill();
-
-      const body = ctx.createRadialGradient(cx - radius * 0.32, cy - radius * 0.48, radius * 0.05, cx + radius * 0.08, cy + radius * 0.04, radius);
-      body.addColorStop(0, mixColor([245, 255, 255], [255, 235, 206], warm, 0.64));
-      body.addColorStop(0.2, mixColor([122, 241, 255], [255, 152, 112], warm, 0.42));
-      body.addColorStop(0.42, mixColor([104, 132, 255], [152, 100, 255], violet, 0.28 + progress * 0.04));
-      body.addColorStop(0.68, mixColor([33, 82, 178], [199, 72, 132], warm, 0.2));
-      body.addColorStop(1, "rgba(7, 20, 50, 0.02)");
-      ctx.fillStyle = body;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fill();
-
-      const rim = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.02);
-      rim.addColorStop(0, "rgba(255, 255, 255, 0)");
-      rim.addColorStop(0.84, mixColor([187, 250, 255], [255, 183, 133], warm, 0.12 + progress * 0.04));
-      rim.addColorStop(0.92, mixColor([255, 255, 255], [255, 218, 184], warm, 0.32 + progress * 0.08));
-      rim.addColorStop(1, "rgba(255, 255, 255, 0)");
-      ctx.fillStyle = rim;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.02, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = mixColor([194, 251, 255], [255, 185, 143], warm, 0.16 + progress * 0.1);
-      ctx.lineWidth = Math.max(1, radius * 0.006);
-      ctx.globalAlpha = 0.54;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, radius * (0.68 + progress * 0.12), radius * (0.22 + progress * 0.05), time * 0.34 + progress * 1.4, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      innerDust.forEach((dust) => {
-        const pulse = Math.sin(frame * dust.speed + dust.phase);
-        const swirl = frame * dust.speed * 0.22 + progress * 1.65;
-        const angle = dust.angle + pulse * 0.11 + swirl;
-        const distance = radius * (dust.distance + dust.spread * 0.1 + progress * 0.12 + Math.sin(swirl + dust.phase) * 0.018);
-        const px = cx + Math.cos(angle) * distance * (1.12 + progress * 0.2) + (pointer.x - 0.5) * 18;
-        const py = cy + Math.sin(angle) * distance * (0.7 + progress * 0.12) + (pointer.y - 0.5) * 12;
-        const glow = dust.tone > 0.78;
-        const alpha = dust.alpha * particleBloom * (0.68 + pulse * 0.22);
-        if (dust.tone > 0.84) {
-          const tailLength = dust.tail * (0.7 + progress * 0.9);
-          ctx.beginPath();
-          ctx.moveTo(px - Math.cos(angle) * tailLength, py - Math.sin(angle) * tailLength * 0.68);
-          ctx.lineTo(px, py);
-          ctx.strokeStyle = `rgba(255, 246, 221, ${alpha * 0.22})`;
-          ctx.lineWidth = Math.max(0.35, dust.size * 0.32);
-          ctx.stroke();
-        }
-        ctx.beginPath();
-        ctx.arc(px, py, dust.size * (glow ? 1.55 : 1) * (1 + progress * 0.18), 0, Math.PI * 2);
-        ctx.fillStyle =
-          dust.tone > 0.62 || warm > 0.45
-            ? mixColor([255, 118, 86], [255, 174, 92], warm, alpha)
-            : dust.tone > 0.34
-              ? mixColor([250, 186, 95], [170, 104, 255], violet, alpha * 0.72)
-              : mixColor([118, 238, 255], [141, 116, 255], violet, alpha * 0.54);
-        ctx.fill();
-      });
-
-      haloDust.forEach((dust) => {
-        const pulse = Math.sin(frame * dust.speed + dust.phase);
-        const plume = frame * dust.speed * 0.18 + progress * 2.05;
-        const angle = dust.angle + pulse * 0.16 + plume;
-        const distance = radius * (dust.distance + dust.spread * 0.2 + progress * 0.28 + Math.sin(plume + dust.phase) * 0.03);
-        const px = cx + Math.cos(angle) * distance * (1.2 + progress * 0.34) + (pointer.x - 0.5) * 26;
-        const py = cy + Math.sin(angle) * distance * (0.7 + progress * 0.18) + (pointer.y - 0.5) * 18;
-        const alpha = dust.alpha * (0.62 + pulse * 0.24) * (0.9 + progress * 0.55);
-        const tailLength = dust.tail * (0.82 + progress * 1.1);
-        ctx.beginPath();
-        ctx.moveTo(px - Math.cos(angle) * tailLength, py - Math.sin(angle) * tailLength * 0.62);
-        ctx.lineTo(px, py);
-        ctx.strokeStyle = dust.tone > 0.72 ? mixColor([255, 255, 255], [255, 225, 190], warm, alpha * 0.26) : mixColor([169, 249, 255], [176, 130, 255], violet, alpha * 0.16);
-        ctx.lineWidth = Math.max(0.35, dust.size * 0.4);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(px, py, dust.size * (1 + progress * 0.28), 0, Math.PI * 2);
-        ctx.fillStyle = dust.tone > 0.72 ? mixColor([255, 255, 255], [255, 225, 190], warm, alpha) : mixColor([169, 249, 255], [176, 130, 255], violet, alpha * 0.66);
-        ctx.fill();
-      });
-
-      ctx.restore();
-    };
-
-    const drawConnections = () => {
-      for (let i = 0; i < points.length; i += 1) {
-        const a = points[i];
-        const ax = a.x * width;
-        const ay = a.y * height;
-        for (let j = i + 1; j < points.length; j += 1) {
-          const b = points[j];
-          const bx = b.x * width;
-          const by = b.y * height;
-          const distance = Math.hypot(ax - bx, ay - by);
-          const limit = 112 + (a.layer + b.layer) * 14;
-          if (distance > limit) continue;
-          const midX = (ax + bx) * 0.5;
-          const midY = (ay + by) * 0.5;
-          const pointerDistance = Math.hypot(midX - pointer.x * width, midY - pointer.y * height);
-          const pointerBoost = pointer.active ? Math.max(0, 1 - pointerDistance / 320) : 0.16;
-          const alpha = Math.max(0, 1 - distance / limit) * (0.09 + pointerBoost * 0.28);
-          if (alpha < 0.012) continue;
-          ctx.beginPath();
-          ctx.moveTo(ax, ay);
-          ctx.lineTo(bx, by);
-          ctx.strokeStyle = `rgba(102, 231, 255, ${alpha})`;
-          ctx.lineWidth = 0.5 + pointerBoost * 0.7;
-          ctx.stroke();
-        }
-      }
-    };
-
-    const draw = () => {
-      scroll.target = getScrollProgress();
-      scroll.current += (scroll.target - scroll.current) * 0.075;
-      ctx.clearRect(0, 0, width, height);
-      pointer.x += (pointer.tx - pointer.x) * 0.06;
-      pointer.y += (pointer.ty - pointer.y) * 0.06;
-      drawSceneWash(scroll.current);
-      drawOrbs(scroll.current);
-      drawHeroSphere(scroll.current);
-      drawGlow(scroll.current);
-      points.forEach((p) => {
-        if (!reduced) {
-          const waveX = Math.sin(frame * 0.006 + p.phase) * 0.00075 * p.layer;
-          const waveY = Math.cos(frame * 0.004 + p.phase * 0.7) * 0.00062 * p.layer;
-          p.x += p.vx + waveX;
-          p.y += p.vy + waveY;
-          p.baseX += p.vx * 0.24;
-          p.baseY += p.vy * 0.24;
-          if (p.x < -0.05) p.x = 1.05;
-          if (p.x > 1.05) p.x = -0.05;
-          if (p.y < -0.05) p.y = 1.05;
-          if (p.y > 1.05) p.y = -0.05;
-        }
-        const px = p.x * width;
-        const py = p.y * height;
-        if (!reduced && pointer.active) {
-          const dx = px - pointer.x * width;
-          const dy = py - pointer.y * height;
-          const distance = Math.hypot(dx, dy);
-          if (distance < 260 && distance > 0) {
-            const force = (1 - distance / 260) ** 2;
-            p.x += (dx / distance) * force * 0.0022 * p.layer;
-            p.y += (dy / distance) * force * 0.0022 * p.layer;
-          }
-        }
-      });
-      drawConnections();
-      points.forEach((p) => {
-        const px = p.x * width;
-        const py = p.y * height;
-        const pointerDistance = Math.hypot(px - pointer.x * width, py - pointer.y * height);
-        const boost = pointer.active ? Math.max(0, 1 - pointerDistance / 220) : 0;
-        const radius = p.radius + boost * 2.4;
-        const alpha = 0.34 + p.layer * 0.16 + boost * 0.4;
-        ctx.beginPath();
-        ctx.arc(px, py, radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.tone > 0.68 ? `rgba(130, 119, 255, ${alpha})` : `rgba(52, 224, 255, ${alpha})`;
-        ctx.fill();
-        if (boost > 0.08) {
-          ctx.beginPath();
-          ctx.arc(px, py, radius * 4.8, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(36, 215, 255, ${boost * 0.035})`;
-          ctx.fill();
-        }
-      });
-      frame += 1;
-      if (!reduced || frame < 3) raf = requestAnimationFrame(draw);
-    };
-
-    const move = (event: PointerEvent) => {
-      pointer.tx = event.clientX / window.innerWidth;
-      pointer.ty = event.clientY / window.innerHeight;
-      pointer.active = true;
-    };
-
-    const leave = () => {
-      pointer.active = false;
-    };
-
-    resize();
-    draw();
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerleave", leave);
+    syncMotion();
+    reducedMotion.addEventListener("change", syncMotion);
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerleave", leave);
+      window.clearTimeout(timer);
+      reducedMotion.removeEventListener("change", syncMotion);
     };
   }, []);
 
-  return <canvas className="particle-field" ref={canvasRef} aria-hidden="true" />;
+  return (
+    <h1 className="hero-title" aria-label={heroTitle}>
+      {Array.from(heroTitle, (character, index) => (
+        <span key={index} aria-hidden="true"
+          data-pending={index >= visibleCount}
+          data-caret={index === Math.max(0, visibleCount - 1)}
+          data-start={visibleCount === 0 && index === 0}
+          data-complete={visibleCount === heroTitle.length}>
+          {character}
+        </span>
+      ))}
+    </h1>
+  );
 }
 
 function App() {
   const { release, status } = useRelease();
-  const [activeHero, setActiveHero] = useState(0);
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [activeScreen, setActiveScreen] = useState(screens[0].key);
-  const [activeNav, setActiveNav] = useState(navItems[0].label);
-  const reduce = useReducedMotion();
+  const [activeScreen, setActiveScreen] = useState(bidScreens[0]);
+  const lightbox = useRef<HTMLDialogElement>(null);
+  const [preview, setPreview] = useState<{ image: string; label: string } | null>(null);
 
-  useEffect(() => {
-    if (reduce) return;
-    const timer = window.setInterval(() => {
-      setActiveHero((index) => (index + 1) % heroDeck.length);
-    }, 4200);
-    return () => window.clearInterval(timer);
-  }, [reduce]);
+  function openPreview(image: string, label: string) {
+    setPreview({ image, label });
+    lightbox.current?.showModal();
+  }
 
   const downloads = useMemo(() => {
     const windows = release && pickAsset(release, (asset) => asset.name.endsWith(".exe") && asset.name.toLowerCase().includes("win"));
@@ -717,273 +206,116 @@ function App() {
     ? new Date(release.published_at).toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })
     : null;
 
-  const currentScreen = screens.find((item) => item.key === activeScreen) ?? screens[0];
-  const currentSlide = heroSlides[activeSlide];
-
   return (
-    <main>
-      <ParticleField />
-      <nav className="nav">
-        <a className="brand" href="#top" aria-label="禹都AI解决方案助手">
-          <img src="/assets/yudubid-icon.png" alt="" />
-          <span>禹都AI解决方案助手</span>
-        </a>
-        <div className="nav-links">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                className={activeNav === item.label ? "active" : ""}
-                target={item.external ? "_blank" : undefined}
-                rel={item.external ? "noreferrer" : undefined}
-                onClick={() => setActiveNav(item.label)}
-              >
-                {activeNav === item.label && <motion.span className="nav-glider" layoutId="nav-glider" transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }} />}
-                <Icon weight="duotone" />
-                <span>{item.label}</span>
-              </a>
-            );
-          })}
+    <>
+      <nav className="nav" aria-label="网站导航">
+        <div className="nav-inner">
+          <a className="brand" href="#top">
+            <img src="/assets/yudubid-icon.png" width="24" height="24" alt="" />
+            <span>禹都AI解决方案助手</span>
+          </a>
+          <div className="nav-links">
+            <a href="#showcase">招投标</a>
+            <a href="#features">工作空间</a>
+            <a href="#usage">使用指南</a>
+            <a href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">开源</a>
+          </div>
+          <a className="button primary nav-download" href="#download">下载</a>
         </div>
       </nav>
 
-      <section id="top" className="hero">
-        <div className="hero-copy">
-          <motion.p className="section-kicker" initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            本地 AI 工作台
-          </motion.p>
-          <motion.h1 className="breath-title" initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-            沉淀资料与经验，交付成果
-          </motion.h1>
-          <motion.p className="hero-sub" initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
-            面向售前工作台、项目管理、技术标书、公文写作、论文导师、软著和专利的一站式本地 AI 工作台。
-          </motion.p>
-          <motion.div className="hero-actions" initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
-            <a className="button primary" href="#download">
-              <CloudArrowDown weight="duotone" />
-              立即下载
-            </a>
-            <a className="button ghost" href="#usage">
-              <FileDoc weight="duotone" />
-              查看使用说明
-            </a>
-            <a className="button ghost" href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">
-              <GithubLogo />
-              liwg1995/YuduBid
-            </a>
-          </motion.div>
-        </div>
-
-        <motion.div
-          className="hero-stage"
-          initial={reduce ? false : { opacity: 0, rotateY: -10, y: 26 }}
-          animate={{ opacity: 1, rotateY: 0, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      <main id="top">
+        <section className="hero"
           onPointerMove={(event) => {
-            if (reduce || event.pointerType === "touch") return;
-            const bounds = event.currentTarget.getBoundingClientRect();
-            const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-            const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-            event.currentTarget.style.setProperty("--tilt-x", `${-y * 7}deg`);
-            event.currentTarget.style.setProperty("--tilt-y", `${x * 9}deg`);
-            event.currentTarget.style.setProperty("--pointer-x", `${(x + 0.5) * 100}%`);
-            event.currentTarget.style.setProperty("--pointer-y", `${(y + 0.5) * 100}%`);
+            if (event.pointerType !== "mouse" || !matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
+            const hero = event.currentTarget;
+            const bounds = hero.getBoundingClientRect();
+            hero.style.setProperty("--hero-x", `${(0.5 - (event.clientX - bounds.left) / bounds.width) * 20}px`);
+            hero.style.setProperty("--hero-y", `${(0.5 - (event.clientY - bounds.top) / bounds.height) * 12}px`);
           }}
-          onPointerLeave={(event) => {
-            event.currentTarget.style.setProperty("--tilt-x", "0deg");
-            event.currentTarget.style.setProperty("--tilt-y", "0deg");
-            event.currentTarget.style.setProperty("--pointer-x", "50%");
-            event.currentTarget.style.setProperty("--pointer-y", "50%");
-          }}
-        >
-          <div className="hero-orbit hero-orbit-back" aria-hidden="true" />
-          <div className="hero-deck" aria-label="软件宣传图幻灯片">
-            <div className="deck-chrome" aria-hidden="true"><span /><span /><span /></div>
-            {heroDeck.map((slide, index) => {
-              const active = index === activeHero;
-              return (
-                <motion.button
-                  type="button"
-                  className="deck-card"
-                  key={slide.label}
-                  aria-label={`查看${slide.label}`}
-                  aria-hidden={!active}
-                  tabIndex={active ? 0 : -1}
-                  onClick={() => setActiveHero(index)}
-                  animate={{
-                    opacity: active ? 1 : 0,
-                    x: active ? 0 : 24,
-                    y: active ? 0 : 10,
-                    rotateY: active ? -2 : 7,
-                    rotateX: active ? 1.5 : 0,
-                    scale: active ? 1 : 0.97,
-                    zIndex: active ? 3 : 1
-                  }}
-                  transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <img src={slide.image} alt={slide.title} />
-                </motion.button>
-              );
-            })}
-            <div className="deck-dots" role="tablist" aria-label="宣传图切换">
-              {heroDeck.map((slide, index) => (
-                <button
-                  key={slide.label}
-                  type="button"
-                  className={index === activeHero ? "active" : ""}
-                  onClick={() => setActiveHero(index)}
-                  aria-selected={index === activeHero}
-                />
-              ))}
+          onPointerLeave={({ currentTarget }) => {
+            currentTarget.style.removeProperty("--hero-x");
+            currentTarget.style.removeProperty("--hero-y");
+          }}>
+          <div className="hero-particles" aria-hidden="true" />
+          <div className="hero-copy">
+            <p className="eyebrow">禹都 AI 解决方案助手</p>
+            <TypingTitle />
+            <p className="intro">八个业务空间，一个本地 AI 工作台。</p>
+            <div className="actions">
+              <a className="button primary" href="#download">立即下载</a>
+              <a className="button outline" href="#showcase">探索功能</a>
             </div>
           </div>
-          <div className="hero-orbit hero-orbit-front" aria-hidden="true" />
-          <div className="hero-floor" aria-hidden="true" />
-        </motion.div>
-      </section>
+          <img className="hero-image screenshot" src="/assets/ui-workspace.webp" width="2000" height="1164" fetchPriority="high" alt="禹都工作台首页，展示八个业务空间" />
+        </section>
 
-      <section id="features" className="mission">
-        <div className="mission-panel">
-          <Sparkle className="mission-icon" weight="duotone" />
-          <h2 className="breath-title">
-            <span>资料进来</span>
-            <span>成果出去</span>
-          </h2>
-          <p>软件把分散的文档、代码、方案和经验沉淀为可复用、可交付的组织资产。</p>
-          <div className="mission-flow">
-            <span>导入</span>
-            <span>解析</span>
-            <span>生成</span>
-            <span>导出</span>
+        <section id="showcase" className="bid-section">
+          <p className="eyebrow">招投标工作流</p>
+          <h2>从找机会，到交标书。</h2>
+          <p className="intro">研判机会、生成方案、复用知识，交付前逐项检查。</p>
+          <div className="screen-controls" role="group" aria-label="选择招投标界面">
+            {bidScreens.map((screen) => (
+              <button key={screen.key} type="button" aria-pressed={activeScreen.key === screen.key}
+                onClick={() => setActiveScreen(screen)}>
+                {screen.label}
+              </button>
+            ))}
           </div>
-        </div>
-        <div className="capability-grid">
-          {capabilities.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <motion.article
-                className="capability-card"
-                key={item.title}
-                initial={false}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ delay: index * 0.06 }}
-              >
-                <Icon weight="duotone" />
-                <h3>{item.title}</h3>
-                <p>{item.copy}</p>
-              </motion.article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="interactive-suite">
-        <div className="suite-copy">
-          <h2 className="breath-title">点击模块，查看它能完成什么。</h2>
-          <p>七个核心场景围绕同一套资料、模板、知识和模型配置运转，减少重复整理。</p>
-          <div className="slide-tabs" role="tablist" aria-label="核心功能">
-            {heroSlides.map((slide, index) => {
-              const Icon = slide.icon;
-              return (
-                <button
-                  key={slide.title}
-                  className={index === activeSlide ? "active" : ""}
-                  type="button"
-                  onClick={() => setActiveSlide(index)}
-                  aria-selected={index === activeSlide}
-                >
-                  <Icon weight="duotone" />
-                  <span>{slide.title}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <motion.div
-          className="feature-orbit"
-          key={currentSlide.title}
-          initial={reduce ? false : { opacity: 0, scale: 0.96, rotateX: 5 }}
-          animate={{ opacity: 1, scale: 1, rotateX: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <img src={currentSlide.image} alt={`${currentSlide.title}宣传图`} />
-          <div className="orbit-copy">
-            <h3>{currentSlide.title}</h3>
-            <p>{currentSlide.copy}</p>
-          </div>
-        </motion.div>
-      </section>
-
-      <section id="showcase" className="showcase">
-        <div className="showcase-head">
-          <h2 className="breath-title">真实功能界面展示</h2>
-          <p>售前工作台、项目管理、论文导师、招投标、公文、软著、专利和配置界面都来自当前软件截图。</p>
-        </div>
-        <div className="showcase-tabs" role="tablist" aria-label="界面展示">
-          {screens.map((screen) => (
-            <button
-              key={screen.key}
-              type="button"
-              className={screen.key === activeScreen ? "active" : ""}
-              onClick={() => setActiveScreen(screen.key)}
-              aria-selected={screen.key === activeScreen}
-            >
-              {screen.label}
+          <figure className="bid-figure" key={activeScreen.key}>
+            <figcaption aria-live="polite">{activeScreen.title}</figcaption>
+            <button className="image-trigger" type="button" onClick={() => openPreview(activeScreen.image, activeScreen.label)}
+              aria-label={`放大查看${activeScreen.label}`} aria-haspopup="dialog">
+              <img className="screenshot" src={activeScreen.image} loading="lazy" width="1800" height="1047" alt={activeScreen.title} />
             </button>
-          ))}
-        </div>
-        <motion.div
-          className="showcase-stage"
-          key={currentScreen.key}
-          initial={reduce ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-        >
-          <div className="showcase-caption">
-            <h3>{currentScreen.title}</h3>
-            <span>{currentScreen.label}</span>
-          </div>
-          <img src={currentScreen.image} alt={`禹都AI解决方案助手${currentScreen.label}界面`} />
-        </motion.div>
-      </section>
+          </figure>
+        </section>
 
-      <section id="usage" className="usage">
-        <div className="usage-head">
-          <p className="section-kicker">使用说明</p>
-          <h2 className="breath-title">从配置开始，逐步完成工作。</h2>
-          <p>无论是第一次配置模型，还是开始编写技术标书，都可以从对应指南快速上手。</p>
-        </div>
-        <div className="usage-grid usage-entry-grid">
-          {usagePages.map((item, index) => (
-            <a className="usage-card usage-entry" href={item.href} key={item.title}>
-              <div className="usage-card-head">
-                <span>{String(index + 1).padStart(2, "0")}</span>
+        <section id="features" className="workspaces">
+          <header className="section-heading">
+            <p className="eyebrow">业务空间</p>
+            <h2>每项工作，都有自己的工作台。</h2>
+          </header>
+          <div className="workspace-grid">
+            {workspaceScreens.map((screen) => (
+              <article className="workspace" key={screen.key}>
+                <h3>{screen.label}</h3>
+                <p>{screen.title}</p>
+                <div className="workspace-pair">
+                  {workspaceVersions.map(({ key, label }) => {
+                    const image = `/assets/compare-${screen.key}-${key}.webp`;
+                    return (
+                      <button key={key} className="image-trigger" type="button"
+                        onClick={() => openPreview(image, `${screen.label} · ${label}`)}
+                        aria-label={`放大查看${screen.label}的${label}界面`} aria-haspopup="dialog">
+                        <span className="workspace-version">{label}<MagnifyingGlassPlus size={15} aria-hidden="true" /></span>
+                        <img className="screenshot" src={image} loading="lazy" alt={`${screen.label}${label}界面`} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="usage" className="usage">
+          <h2>开始使用。</h2>
+          <div className="guide-grid">
+            {usagePages.map((item) => (
+              <a className="guide" href={item.href} key={item.href}>
                 <h3>{item.title}</h3>
-              </div>
-              <p>{item.detail}</p>
-              <ul>
-                {item.points.map((point) => (
-                  <li key={point}>
-                    <CheckCircle weight="duotone" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-              <strong>
-                查看使用指南
-                <ArrowRight />
-              </strong>
-            </a>
-          ))}
-        </div>
-      </section>
+                <p>{item.detail}</p>
+                <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul>
+                <span className="text-link">查看指南 <ArrowRight size={14} /></span>
+              </a>
+            ))}
+          </div>
+        </section>
 
       <section id="download" className="download">
         <div className="download-copy">
-          <h2 className="breath-title">获取最新版</h2>
+          <h2 >获取最新版</h2>
           <p>
             {release ? (
               <>当前最新版本 <strong>{release.tag_name}</strong>，发布于 {releaseDate}。</>
@@ -997,7 +329,6 @@ function App() {
             <GithubLogo />
             开源链接 liwg1995/YuduBid
           </a>
-          <p className="star-note">若您喜欢这个项目，记得在Github上对本项目点一个Star🌟！并欢迎提issue～</p>
         </div>
         <div className="download-grid">
           {downloads.map((item) => {
@@ -1005,12 +336,11 @@ function App() {
             const disabled = !item.asset;
             return (
               <a
-                className={`download-card ${disabled ? "disabled" : ""}`}
+                className="download-card"
                 key={`${item.label}-${item.detail}`}
                 href={item.asset?.browser_download_url ?? release?.html_url ?? "https://github.com/liwg1995/YuduBid/releases"}
                 target="_blank"
                 rel="noreferrer"
-                aria-disabled={disabled}
               >
                 <Icon weight="duotone" />
                 <span className="download-title">{item.label}</span>
@@ -1027,7 +357,23 @@ function App() {
         <span>Copyright © 2026 禹都一只猫</span>
         <a href={release?.html_url ?? "https://github.com/liwg1995/YuduBid/releases"} target="_blank" rel="noreferrer">GitHub Releases</a>
       </footer>
-    </main>
+      </main>
+      <dialog ref={lightbox} className="lightbox" aria-labelledby="preview-title"
+        onClose={() => setPreview(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        }}>
+        <div className="lightbox-content">
+          <div className="lightbox-bar">
+            <h2 id="preview-title">{preview?.label}</h2>
+            <button type="button" aria-label="关闭图片预览" onClick={() => lightbox.current?.close()}>
+              <X size={22} aria-hidden="true" />
+            </button>
+          </div>
+          {preview && <img src={preview.image} alt={`${preview.label}界面`} />}
+        </div>
+      </dialog>
+    </>
   );
 }
 
