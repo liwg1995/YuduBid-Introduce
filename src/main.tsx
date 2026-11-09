@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AppleLogo } from "@phosphor-icons/react/dist/csr/AppleLogo";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
+import { BookOpen } from "@phosphor-icons/react/dist/csr/BookOpen";
+import { Briefcase } from "@phosphor-icons/react/dist/csr/Briefcase";
 import { GithubLogo } from "@phosphor-icons/react/dist/csr/GithubLogo";
 import { MagnifyingGlassPlus } from "@phosphor-icons/react/dist/csr/MagnifyingGlassPlus";
+import { SquaresFour } from "@phosphor-icons/react/dist/csr/SquaresFour";
 import { WindowsLogo } from "@phosphor-icons/react/dist/csr/WindowsLogo";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import "./styles.css";
@@ -220,10 +223,10 @@ function App() {
             <span>禹都AI解决方案助手</span>
           </a>
           <div className="nav-links">
-            <a href="#showcase">招投标</a>
-            <a href="#features">工作空间</a>
-            <a href="#usage">使用指南</a>
-            <a href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">开源</a>
+            <a href="#showcase"><Briefcase aria-hidden="true" />招投标</a>
+            <a href="#features"><SquaresFour aria-hidden="true" />工作空间</a>
+            <a href="#usage"><BookOpen aria-hidden="true" />使用指南</a>
+            <a href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer"><GithubLogo aria-hidden="true" />开源</a>
           </div>
           <a className="button primary nav-download" href="#download">下载</a>
         </div>
@@ -372,7 +375,7 @@ function App() {
           <div className="lightbox-bar">
             <h2 id="preview-title">{preview?.label}</h2>
             <button type="button" aria-label="关闭图片预览" onClick={() => lightbox.current?.close()}>
-              <X size={22} aria-hidden="true" />
+              <X aria-hidden="true" />
             </button>
           </div>
           {preview && <img src={preview.image} alt={`${preview.label}界面`} />}

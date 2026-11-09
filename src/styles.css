@@ -45,6 +45,8 @@ h1, h2, h3, p, figure { margin: 0; }
 .brand { gap: 8px; white-space: nowrap; font-size: 15px; font-weight: 700; }
 .brand img { border-radius: 6px; }
 .nav-links { gap: clamp(16px, 4vw, 52px); font-size: 13px; }
+.nav-links a { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.nav-links a svg { flex: none; width: 14px; height: 14px; }
 .nav-links a:hover, .repo-link:hover, .text-link:hover { text-decoration: underline; }
 .button {
   display: inline-flex;
@@ -244,13 +246,19 @@ html:has(.lightbox[open]) { overflow: hidden; }
 .lightbox-bar button {
   display: grid;
   place-items: center;
-  min-width: 44px;
-  min-height: 44px;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
   color: inherit;
   cursor: pointer;
+}
+.lightbox-bar button svg { display: block; width: 18px; height: 18px; }
+@media (max-width: 640px) {
+  .lightbox-bar button svg { width: 16px; height: 16px; }
 }
 .lightbox-bar button:hover { background: #303641; }
 .lightbox img { width: auto; height: auto; max-height: calc(100dvh - 76px); object-fit: contain; }
