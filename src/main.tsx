@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { AppleLogo, ArrowRight, GithubLogo, MagnifyingGlassPlus, WindowsLogo, X } from "@phosphor-icons/react";
+import { AppleLogo } from "@phosphor-icons/react/dist/csr/AppleLogo";
+import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
+import { GithubLogo } from "@phosphor-icons/react/dist/csr/GithubLogo";
+import { MagnifyingGlassPlus } from "@phosphor-icons/react/dist/csr/MagnifyingGlassPlus";
+import { WindowsLogo } from "@phosphor-icons/react/dist/csr/WindowsLogo";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import "./styles.css";
 
 type ReleaseAsset = {
