@@ -176,7 +176,8 @@ h2 { font-size: clamp(29px, 4.2vw, 58px); line-height: 1.15; letter-spacing: -.0
 .guide ul { padding-left: 1.3em; font-size: 14px; }
 .guide .text-link { justify-content: flex-start; }
 .download { background: var(--paper); }
-.repo-link { justify-content: center; gap: 7px; color: var(--blue); margin-top: 14px; }
+.repo-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 24px; margin-top: 14px; }
+.repo-link { gap: 7px; color: var(--blue); }
 .download-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .download-card { position: relative; display: grid; gap: 7px; background: #fff; }
 .download-card > svg:first-child { font-size: 25px; }

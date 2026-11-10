@@ -4,6 +4,7 @@ import { AppleLogo } from "@phosphor-icons/react/dist/csr/AppleLogo";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { BookOpen } from "@phosphor-icons/react/dist/csr/BookOpen";
 import { Briefcase } from "@phosphor-icons/react/dist/csr/Briefcase";
+import { GitBranch } from "@phosphor-icons/react/dist/csr/GitBranch";
 import { GithubLogo } from "@phosphor-icons/react/dist/csr/GithubLogo";
 import { MagnifyingGlassPlus } from "@phosphor-icons/react/dist/csr/MagnifyingGlassPlus";
 import { SquaresFour } from "@phosphor-icons/react/dist/csr/SquaresFour";
@@ -258,7 +259,7 @@ function App() {
             <a href="#showcase"><Briefcase aria-hidden="true" />招投标</a>
             <a href="#features"><SquaresFour aria-hidden="true" />工作空间</a>
             <a href="#usage"><BookOpen aria-hidden="true" />使用指南</a>
-            <a href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer"><GithubLogo aria-hidden="true" />开源</a>
+            <a href="#source"><GitBranch aria-hidden="true" />开源</a>
           </div>
           <a className="button primary nav-download" href="#download">下载</a>
         </div>
@@ -369,10 +370,14 @@ function App() {
               "暂时无法获取最新版本，请稍后刷新重试。"
             )}
           </p>
-          <a className="repo-link" href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">
-            <GithubLogo />
-            开源链接 liwg1995/YuduBid
-          </a>
+          <nav id="source" className="repo-links" aria-label="开源仓库">
+            <a className="repo-link" href="https://github.com/liwg1995/YuduBid" target="_blank" rel="noreferrer">
+              <GithubLogo aria-hidden="true" /> GitHub
+            </a>
+            <a className="repo-link" href="https://gitcode.com/oleime/YuduBid" target="_blank" rel="noreferrer">
+              <GitBranch aria-hidden="true" /> GitCode
+            </a>
+          </nav>
         </div>
         <div className="download-grid">
           {downloads.map((item) => {
