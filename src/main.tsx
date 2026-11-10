@@ -188,6 +188,38 @@ function TypingTitle() {
   );
 }
 
+function HeroBackground() {
+  const video = useRef<HTMLVideoElement>(null);
+  const [enabled, setEnabled] = useState(false);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setEnabled(!preference.matches);
+    update();
+    preference.addEventListener("change", update);
+    return () => preference.removeEventListener("change", update);
+  }, []);
+
+  if (!enabled) return null;
+  return (
+    <>
+      <div className="hero-background" aria-hidden="true">
+        <video ref={video} src="/assets/hero-background.mp4" muted loop playsInline autoPlay
+          onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
+      </div>
+      <button className="hero-video-toggle" type="button" onClick={() => {
+        const media = video.current;
+        if (!media) return;
+        if (media.paused) void media.play().catch(() => {});
+        else media.pause();
+      }}>
+        {playing ? "暂停背景" : "播放背景"}
+      </button>
+    </>
+  );
+}
+
 function App() {
   const { release, status } = useRelease();
   const [activeScreen, setActiveScreen] = useState(bidScreens[0]);
@@ -249,7 +281,7 @@ function App() {
             currentTarget.style.removeProperty("--hero-y");
             currentTarget.style.removeProperty("--hero-tilt");
           }}>
-          <div className="hero-particles" aria-hidden="true" />
+          <HeroBackground />
           <div className="hero-copy">
             <p className="eyebrow">禹都 AI 解决方案助手</p>
             <TypingTitle />
@@ -259,7 +291,7 @@ function App() {
               <a className="button outline" href="#showcase">探索功能</a>
             </div>
           </div>
-          <img className="hero-image screenshot" src="/assets/ui-workspace.webp" width="2000" height="1164" fetchPriority="high" alt="禹都工作台首页，展示八个业务空间" />
+          <img className="hero-image screenshot" src="/assets/ui-workspace.webp" width="2000" height="1165" fetchPriority="high" alt="禹都工作台首页，展示八个业务空间" />
         </section>
 
         <section id="showcase" className="bid-section">

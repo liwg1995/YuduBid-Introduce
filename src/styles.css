@@ -332,34 +332,32 @@ html:has(.lightbox[open]) { overflow: hidden; }
 }
 
 .hero { position: relative; isolation: isolate; }
-.hero-particles {
+.hero-background {
   position: absolute;
   z-index: -1;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 9% 22%, #729bd5 1.5px, transparent 3px),
-    radial-gradient(circle at 22% 62%, #9db9e4 2px, transparent 4px),
-    radial-gradient(circle at 81% 17%, #82a6dc 1.5px, transparent 3px),
-    radial-gradient(circle at 93% 47%, #6d9ad7 2px, transparent 4px),
-    radial-gradient(circle at 12% 84%, #97b4e1 1.5px, transparent 3px),
-    radial-gradient(circle at 88% 78%, #9ab8e2 2px, transparent 4px);
 }
-.hero-particles::before {
+.hero-background video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero-background::after {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 16% 34%, #8daedd 1px, transparent 3px),
-    radial-gradient(circle at 30% 12%, #a1bbe2 1.5px, transparent 3px),
-    radial-gradient(circle at 72% 30%, #93aede 1px, transparent 3px),
-    radial-gradient(circle at 86% 57%, #a3bde5 1.5px, transparent 3px),
-    radial-gradient(circle at 5% 60%, #93afdf 2px, transparent 4px),
-    radial-gradient(circle at 95% 91%, #a3bde5 1.5px, transparent 3px);
+  background: linear-gradient(180deg, rgb(245 247 251 / 73%), rgb(234 242 255 / 54%) 42%, rgb(220 232 252 / 35%));
 }
-
-@media (max-width: 640px) {
-  .hero-particles::before { display: none; }
+.hero-video-toggle {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: var(--gutter);
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #b6c5dc;
+  border-radius: 999px;
+  background: #f5f7fb;
+  color: #334563;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .hero-title span { position: relative; display: inline-block; }
@@ -377,15 +375,8 @@ html:has(.lightbox[open]) { overflow: hidden; }
   .hero-title [data-complete="true"][data-caret="true"]::after {
     animation: type-caret-blink 1s step-end infinite;
   }
-  .hero-particles { animation: particle-drift 13s ease-in-out infinite alternate; }
-  .hero-particles::before { animation: particle-drift 17s ease-in-out infinite alternate-reverse; }
 }
 
 @keyframes type-caret-blink {
   50% { opacity: 0; }
-}
-
-@keyframes particle-drift {
-  from { transform: translate3d(-4px, 4px, 0); opacity: .45; }
-  to { transform: translate3d(6px, -9px, 0); opacity: .85; }
 }
