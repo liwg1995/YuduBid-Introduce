@@ -238,12 +238,16 @@ function App() {
             if (event.pointerType !== "mouse" || !matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
             const hero = event.currentTarget;
             const bounds = hero.getBoundingClientRect();
-            hero.style.setProperty("--hero-x", `${(0.5 - (event.clientX - bounds.left) / bounds.width) * 20}px`);
-            hero.style.setProperty("--hero-y", `${(0.5 - (event.clientY - bounds.top) / bounds.height) * 12}px`);
+            const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+            const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+            hero.style.setProperty("--hero-x", `${-x * 56}px`);
+            hero.style.setProperty("--hero-y", `${-y * 32}px`);
+            hero.style.setProperty("--hero-tilt", `${x * 9}deg`);
           }}
           onPointerLeave={({ currentTarget }) => {
             currentTarget.style.removeProperty("--hero-x");
             currentTarget.style.removeProperty("--hero-y");
+            currentTarget.style.removeProperty("--hero-tilt");
           }}>
           <div className="hero-particles" aria-hidden="true" />
           <div className="hero-copy">
